@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kinjal Goswami — Field Log</title>
+<meta name="description" content="Kinjal Goswami — CSE student building AI/ML systems. SentinelAI, Contract Risk Analyzer, open source work with Arkor." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- OPENING SEQUENCE -->
+<div id="intro" class="intro">
+  <div class="intro-inner">
+    <p class="intro-line"><span id="typedLine"></span><span class="cursor">_</span></p>
+    <button id="enterBtn" class="intro-enter" aria-label="Enter portfolio">
+      <span>enter the log</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- SPINE NAV -->
+<nav class="spine" id="spine" aria-label="Section navigation">
+  <a href="#hero" class="spine-link" data-target="hero"><span class="spine-num">000</span><span class="spine-label">Top</span></a>
+  <a href="#about" class="spine-link" data-target="about"><span class="spine-num">001</span><span class="spine-label">Who</span></a>
+  <a href="#builds" class="spine-link" data-target="builds"><span class="spine-num">002</span><span class="spine-label">Builds</span></a>
+  <a href="#opensource" class="spine-link" data-target="opensource"><span class="spine-num">003</span><span class="spine-label">Open Source</span></a>
+  <a href="#public" class="spine-link" data-target="public"><span class="spine-num">004</span><span class="spine-label">In Public</span></a>
+  <a href="#education" class="spine-link" data-target="education"><span class="spine-num">005</span><span class="spine-label">Education</span></a>
+  <a href="#connect" class="spine-link" data-target="connect"><span class="spine-num">006</span><span class="spine-label">Connect</span></a>
+</nav>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero" class="section hero">
+    <div class="hero-status">
+      <span class="dot"></span>
+      <span class="mono">open to internships — YC backed & early-stage</span>
+    </div>
+    <h1 class="hero-title">
+      Kinjal Goswami builds<br>
+      <span class="hero-title-em">AI systems, then sells</span><br>
+      the story behind them.
+    </h1>
+    <p class="hero-sub">
+      CSE student. Want to know what actually happened before
+  the demo looked this clean? Scroll.
+    </p>
+    <div class="hero-links mono">
+      <a href="https://github.com/KinjalGoswami68" target="_blank" rel="noopener">GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://linkedin.com/in/kinjal-goswami-03738a376" target="_blank" rel="noopener">LinkedIn</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://x.com/KGoswami70" target="_blank" rel="noopener">X</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://medium.com/@kinjalgoswami682" target="_blank" rel="noopener">Medium</a>
+      <span aria-hidden="true">·</span>
+      <a href="mailto:kinjalgoswami682@gmail.com">Email</a>
+      <span aria-hidden="true">·</span>
+      <a href="assets/resume/Kinjal_Resume.pdf" target="_blank" rel="noopener">Resume ↓</a>
+    </div>
+    <div class="scroll-cue mono" aria-hidden="true">scroll — the log continues</div>
+  </section>
+
+  <!-- ABOUT / LOG 001 -->
+  <section id="about" class="section about reveal">
+    <p class="log-tag mono">LOG 001 / WHO'S WRITING THIS</p>
+    <div class="about-grid">
+      <p class="about-lead">
+        CS student building AI/ML systems — SentinelAI and a Contract Risk Analyzer.
+      </p>
+      <div class="about-body">
+        <p>
+          I'm a second year CSE student. I build full systems: the ML
+          pipeline, the API, the deploy, the dashboard and write about what I learn
+          along the way.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUILDS / LOG 002 -->
+  <section id="builds" class="section builds reveal">
+    <p class="log-tag mono">LOG 002 / BUILDS</p>
+    <h2 class="section-title">Two systems, shipped and running.</h2>
+
+    <!-- Project 1 -->
+    <article class="project-card">
+      <button class="project-toggle" aria-expanded="false" aria-controls="proj1-body">
+        <div class="project-toggle-head">
+          <h3 class="project-name">SentinelAI</h3>
+          <span class="project-tagline">Production LLM quality monitoring system</span>
+        </div>
+        <span class="project-plus" aria-hidden="true">+</span>
+      </button>
+      <div class="project-body" id="proj1-body">
+        <div class="project-body-inner">
+          <div class="project-main">
+            <p>
+              Most teams shipping AI chatbots have no visibility into what the model is
+              actually saying to users once it's live. SentinelAI watches for that —
+              in real time.
+            </p>
+            <p>
+              A three-signal detection engine catches failure modes a single metric would miss:
+              TF-IDF cosine similarity for semantic drift, Isolation Forest for anomaly
+              detection, and a CUSUM statistical control algorithm for gradual quality decay.
+              A multi-tenant FastAPI backend learns each tenant's "normal" from live usage
+              rather than hardcoding it, with a 50-sample warmup phase to cut false positives
+              during cold starts. Alerts reach Slack within 60 seconds of detection.
+            </p>
+            <div class="project-stack mono">
+              Python · FastAPI · scikit-learn · Streamlit · Supabase (PostgreSQL) · Render · Slack Webhooks
+            </div>
+            <a class="project-link mono" href="https://sentinelai24455.streamlit.app" target="_blank" rel="noopener">
+              → live dashboard
+            </a>
+          </div>
+          <aside class="field-log mono" aria-label="Build notes">
+            <p class="field-log-title">field notes</p>
+            <ul>
+              <li><span class="fl-dot"></span>chose TF-IDF over sentence-transformers — 512MB RAM constraint on Render</li>
+              <li><span class="fl-dot"></span>added 50-sample warmup after early false-positive spikes on cold start</li>
+              <li><span class="fl-dot"></span>own full lifecycle: architecture → ML pipeline → backend → deploy → UI</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 2 -->
+    <article class="project-card">
+      <button class="project-toggle" aria-expanded="false" aria-controls="proj2-body">
+        <div class="project-toggle-head">
+          <h3 class="project-name">Contract Risk Analyzer</h3>
+          <span class="project-tagline">NLP-based legal contract review tool</span>
+        </div>
+        <span class="project-plus" aria-hidden="true">+</span>
+      </button>
+      <div class="project-body" id="proj2-body">
+        <div class="project-body-inner">
+          <div class="project-main">
+            <p>
+              Contracts are dense on purpose. This tool fine-tunes DistilBERT on the CUAD
+              dataset (Contract Understanding Atticus Dataset) to flag and classify clauses
+              across 34 legal risk categories — then hands each flagged clause to Llama 3.3 70B
+              via Groq to explain, in plain English, what it actually commits you to.
+            </p>
+            <p>
+              Upload a contract, get clause-level risk flags with explanations in one pass —
+              a multi-step NLP pipeline collapsed into a single usable tool.
+            </p>
+            <div class="project-stack mono">
+              Python · Hugging Face Transformers (DistilBERT) · Groq API (Llama 3.3 70B) · Streamlit
+            </div>
+            <a class="project-link mono" href="https://contract-risk-analyzer23.streamlit.app/" target="_blank" rel="noopener">
+              → live dashboard
+            </a>
+          </div>
+          <aside class="field-log mono" aria-label="Build notes">
+            <p class="field-log-title">field notes</p>
+            <ul>
+              <li><span class="fl-dot"></span>fine-tuned DistilBERT solo — reached ~75% accuracy across 34 categories</li>
+              <li><span class="fl-dot"></span>handled full pipeline alone: preprocessing → fine-tuning → prompt design → frontend</li>
+              <li><span class="fl-dot"></span>LLM layer added specifically so non-lawyers can read the output</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- OPEN SOURCE / LOG 003 -->
+  <section id="opensource" class="section opensource reveal">
+    <p class="log-tag mono">LOG 003 / OPEN SOURCE</p>
+    <div class="os-card">
+      <div class="os-head">
+        <h3>Merged PR — arkorlab/arkor</h3>
+        <span class="os-status mono"><span class="dot"></span>merged</span>
+      </div>
+      <p>
+        Diagnosed and fixed a port-fallback bug in the <code>arkor dev</code> CLI command.
+        Took the fix through multiple rounds of maintainer code review before it landed
+        in the main project — my first real open source contribution, review comments and all.
+      </p>
+      <a class="project-link mono" href="https://github.com/arkorlab/arkor/issues/199" target="_blank" rel="noopener">→ view the PR</a>
+    </div>
+  </section>
+
+  <!-- IN PUBLIC / LOG 004 -->
+  <section id="public" class="section inpublic reveal">
+    <p class="log-tag mono">LOG 004 / IN PUBLIC</p>
+    <h2 class="section-title">I write down what I learn.</h2>
+    <p class="about-lead" style="max-width:640px;">
+      Technical breakdowns and build logs, posted as I go — not after everything's polished.
+    </p>
+    <div class="public-links">
+      <a class="public-card" href="https://x.com/KGoswami70" target="_blank" rel="noopener">
+        <span class="public-card-label mono">X</span>
+        <span class="public-card-title">Build logs &amp; technical breakdowns</span>
+        <span class="public-card-arrow" aria-hidden="true">↗</span>
+      </a>
+      <a class="public-card" href="https://medium.com/@kinjalgoswami682" target="_blank" rel="noopener">
+        <span class="public-card-label mono">Medium</span>
+        <span class="public-card-title">Long-form articles on ML/AI projects</span>
+        <span class="public-card-arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <div class="numbers">
+      <div class="number-block">
+        <span class="number-value mono" data-count="5000" data-suffix="+">0</span>
+        <span class="number-label mono">followers across X &amp; LinkedIn</span>
+      </div>
+      <div class="number-block">
+        <span class="number-value mono" data-count="150" data-suffix="+">0</span>
+        <span class="number-label mono">DSA problems solved</span>
+      </div>
+      <div class="number-block">
+        <span class="number-value mono" data-count="100" data-suffix="+">0</span>
+        <span class="number-label mono">day LeetCode streak</span>
+      </div>
+      <div class="number-block">
+        <span class="number-value mono" data-count="34" data-suffix="">0</span>
+        <span class="number-label mono">legal risk categories classified</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CONNECT -->
+  <section id="connect" class="section connect reveal">
+    <p class="log-tag mono">LOG 006 / CONNECT</p>
+    <h2 class="section-title connect-title">
+      If this looks like the kind of<br>work you want on your team —
+    </h2>
+    <a href="mailto:kinjalgoswami682@gmail.com" class="connect-email">kinjalgoswami682@gmail.com</a>
+    <div class="hero-links mono connect-links">
+      <a href="https://github.com/KinjalGoswami68" target="_blank" rel="noopener">GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://linkedin.com/in/kinjal-goswami-03738a376" target="_blank" rel="noopener">LinkedIn</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://x.com/KGoswami70" target="_blank" rel="noopener">X</a>
+      <span aria-hidden="true">·</span>
+      <a href="assets/resume/Kinjal_Resume.pdf" target="_blank" rel="noopener">Resume ↓</a>
+    </div>
+    <footer class="footer mono">
+      © Kinjal Goswami
+    </footer>
+  </section>
+
+</main>
+
+<script src="js/script.js"></script>
+</body>
+</html>
