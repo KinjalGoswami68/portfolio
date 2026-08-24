@@ -232,6 +232,19 @@ main {
   border-bottom: 1px solid var(--c-olive);
 }
 
+.hero-photo-wrap {
+  margin-bottom: 28px;
+}
+
+.hero-photo {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--c-olive-line);
+  filter: grayscale(15%);
+}
+
 .hero-status {
   display: inline-flex;
   align-items: center;
