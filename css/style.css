@@ -485,6 +485,10 @@ main {
   max-width: 720px;
 }
 
+.os-card + .os-card {
+  margin-top: 20px;
+}
+
 .os-head {
   display: flex;
   align-items: center;

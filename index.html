@@ -51,7 +51,7 @@
     </div>
     <div class="hero-status">
       <span class="dot"></span>
-      <span class="mono">open to internships — YC-backed & early-stage</span>
+      <span class="mono">open to internships</span>
     </div>
     <h1 class="hero-title">
       Kinjal Goswami builds<br>
@@ -184,6 +184,49 @@
         </div>
       </div>
     </article>
+
+    <!-- Project 3 -->
+    <article class="project-card">
+      <button class="project-toggle" aria-expanded="false" aria-controls="proj3-body">
+        <div class="project-toggle-head">
+          <h3 class="project-name">Orbital Terrain Scanner</h3>
+          <span class="project-tagline">Satellite land-cover classifier with anomaly filtering</span>
+        </div>
+        <span class="project-plus" aria-hidden="true">+</span>
+      </button>
+      <div class="project-body" id="proj3-body">
+        <div class="project-body-inner">
+          <div class="project-main">
+            <p>
+              Fine-tuned a pretrained ResNet18 on the EuroSAT Sentinel-2 dataset, swapping
+              the final layer to classify satellite imagery into 10 land-cover classes —
+              forest, water, industrial, residential, and more.
+            </p>
+            <p>
+              Built a geospatial preprocessing pipeline with rasterio and NumPy to convert
+              raw .tif/.jpg satellite files into normalized tensors the model could actually
+              use, then added an interactive anomaly filter using NumPy matrix masking that
+              strips out vegetation and water classes in real time — leaving just exposed
+              ground and infrastructure.
+            </p>
+            <div class="project-stack mono">
+              Python · PyTorch (ResNet18) · rasterio · NumPy · Streamlit
+            </div>
+            <a class="project-link mono" href="https://terrain-web-app.streamlit.app/" target="_blank" rel="noopener">
+              → live dashboard
+            </a>
+          </div>
+          <aside class="field-log mono" aria-label="Build notes">
+            <p class="field-log-title">field notes</p>
+            <ul>
+              <li><span class="fl-dot"></span>fought Git buffer-size and timeout issues to deploy a 43MB model file</li>
+              <li><span class="fl-dot"></span>built the anomaly filter with matrix masking, not a second model</li>
+              <li><span class="fl-dot"></span>shipped with file upload, session-state handling, and custom CSS</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </article>
   </section>
 
   <!-- OPEN SOURCE / LOG 003 -->
@@ -200,6 +243,22 @@
         in the main project — my first real open source contribution, review comments and all.
       </p>
       <a class="project-link mono" href="https://github.com/arkorlab/arkor/issues/199" target="_blank" rel="noopener">→ view the PR</a>
+    </div>
+
+    <div class="os-card">
+      <div class="os-head">
+        <h3>Merged PR — Torutesu/HonmaruAI</h3>
+        <span class="os-status mono"><span class="dot"></span>merged, 27 commits</span>
+      </div>
+      <p>
+        Turned the reference web client into a real signed-in client — built session-token
+        auth and a browser create/decide flow reaching the WebSocket relay, plus a CORS fix
+        that unblocked all browser API calls. During review, the maintainer found real
+        authorization gaps in the auth code (org-membership checks, invite-role validation,
+        identity uniqueness). Fixed every one across multiple rounds of review, adding a
+        test for each fix, before it merged.
+      </p>
+      <a class="project-link mono" href="https://github.com/Torutesu/HonmaruAI/pull/10" target="_blank" rel="noopener">→ view the PR</a>
     </div>
   </section>
 
