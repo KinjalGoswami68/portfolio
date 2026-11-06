@@ -70,4 +70,11 @@ export const ring = {
   spinEase: 4, // how quickly scroll/drag spin catches up (higher = snappier)
   blockerSink: 2.4, // how far panels in front of her sink below the floor
   scrollScreens: 2.5, // how tall the ring part of the page is, in screen heights
+  frameGlow: 0.15, // the gold frame's own glow, normally
+  hoverFrameGlow: 0.9, // ...and when hovered
+  hoverLift: 0.15, // how far a hovered panel rises
+  openDistance: 5, // how far in front of the camera an open panel floats
+  openSpeed: 5, // how fast it flies to the front and back (higher = faster)
+  dimmedOpacity: 0.2, // the other panels while one is open
+  burstSeconds: 1.8, // how long the gold sparkle burst lasts
 }

@@ -7,6 +7,8 @@ import CameraRig from './scene/CameraRig'
 import Intro from './overlay/Intro'
 import RingHud from './overlay/RingHud'
 import Footer from './overlay/Footer'
+import ProjectDetail from './overlay/ProjectDetail'
+import { projects } from './data/projects'
 import { cameraViews, colors, fonts, ring } from './theme'
 import { sceneState } from './sceneState'
 import './overlay/overlay.css'
@@ -26,9 +28,17 @@ const themeVariables = {
   '--font-body': `'${fonts.body}'`,
 } as CSSProperties
 
+// #leash in the address bar -> the index of that project (-1 if none)
+function projectIndexFromHash() {
+  const id = window.location.hash.slice(1)
+  return projects.findIndex((project) => project.id === id)
+}
+
 // App does layout only: the 3D canvas at the back, the HTML overlay on top.
 export default function App() {
-  const [view, setView] = useState<View>('intro')
+  // a link with #leash skips the intro and opens that project straight away
+  const [openIndex, setOpenIndex] = useState(projectIndexFromHash) // which project is open (-1 = none)
+  const [view, setView] = useState<View>(() => (projectIndexFromHash() >= 0 ? 'ring' : 'intro'))
   const appRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<number | null>(null) // last pointer x while dragging, null = not dragging
@@ -42,6 +52,34 @@ export default function App() {
       scrollerRef.current?.scrollTo({ top: 0 })
     }
   }, [view])
+
+  // open / close a project, and keep the address bar's #hash in step
+  function openProject(index: number) {
+    setView('ring')
+    setOpenIndex(index)
+    sceneState.hoveredIndex = -1
+    document.body.style.cursor = ''
+    window.history.replaceState(null, '', `#${projects[index].id}`)
+  }
+  function closeProject() {
+    setOpenIndex(-1)
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  }
+  function backToIntro() {
+    closeProject()
+    setView('intro')
+  }
+
+  // someone edits the #hash by hand (or uses back/forward): follow it
+  useEffect(() => {
+    function onHashChange() {
+      const index = projectIndexFromHash()
+      if (index >= 0) setView('ring')
+      setOpenIndex(index)
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
 
   // dragging sideways in the ring view spins the ring
   function onPointerDown(event: React.PointerEvent) {
@@ -88,7 +126,7 @@ export default function App() {
       >
         <World />
         <Character />
-        <ProjectRing shown={view === 'ring'} />
+        <ProjectRing shown={view === 'ring'} openIndex={openIndex} onOpen={openProject} />
         <CameraRig view={view} />
       </Canvas>
 
@@ -111,8 +149,9 @@ export default function App() {
 
       <div className="overlay">
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
-        <RingHud shown={view === 'ring'} onBack={() => setView('intro')} />
+        <RingHud shown={view === 'ring'} onBack={backToIntro} onOpen={openProject} />
         <Footer />
+        <ProjectDetail project={openIndex >= 0 ? projects[openIndex] : null} onClose={closeProject} />
       </div>
     </div>
   )

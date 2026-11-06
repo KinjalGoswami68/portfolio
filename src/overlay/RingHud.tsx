@@ -1,14 +1,17 @@
 import { useEffect, useRef } from 'react'
 import { hero } from '../data/content'
+import { projects } from '../data/projects'
+import { sceneState } from '../sceneState'
 
 type Props = {
   shown: boolean
   onBack: () => void
+  onOpen: (index: number) => void
 }
 
-// What sits over the ring view for now: the "back to intro" link and the hero badge.
-// (The badge opens the leash panel in part G. Until then it's just text.)
-export default function RingHud({ shown, onBack }: Props) {
+// What sits over the ring view: the Back to intro link, the hero badge (opens Leash),
+// and one hidden button per panel so the keyboard can reach every project.
+export default function RingHud({ shown, onBack, onOpen }: Props) {
   const backRef = useRef<HTMLButtonElement>(null)
   const wasShown = useRef(shown)
 
@@ -18,13 +21,38 @@ export default function RingHud({ shown, onBack }: Props) {
     wasShown.current = shown
   }, [shown])
 
+  const leashIndex = projects.findIndex((project) => project.id === 'leash')
+
   return (
     <div className={`ring-hud ${shown ? '' : 'is-hidden'}`} inert={!shown}>
       {/* a button, not a link: it changes the view, it doesn't go to another page */}
       <button ref={backRef} type="button" className="back-link" onClick={onBack}>
         {hero.backLink}
       </button>
-      <p className="hero-badge title-shimmer">{hero.badge}</p>
+
+      <button type="button" className="hero-badge" onClick={() => onOpen(leashIndex)}>
+        <span className="title-shimmer">{hero.badge}</span>
+      </button>
+
+      {/* keyboard path to the panels: invisible until focused. focusing one also "hovers" its panel */}
+      <ul className="panel-buttons">
+        {projects.map((project, i) => (
+          <li key={project.id}>
+            <button
+              type="button"
+              onClick={() => onOpen(i)}
+              onFocus={() => {
+                sceneState.hoveredIndex = i
+              }}
+              onBlur={() => {
+                if (sceneState.hoveredIndex === i) sceneState.hoveredIndex = -1
+              }}
+            >
+              {project.name}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

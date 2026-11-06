@@ -19,6 +19,18 @@ export const hero = {
   backLink: 'Back to intro',
 }
 
+// buttons and headings in the project detail card (CONTENT.md "labels")
+export const detailLabels = {
+  close: 'Close',
+  whatItIs: 'What it is',
+  demo: 'The demo',
+  tryIt: 'Try it',
+  honestLimit: 'Honest limit',
+  fieldNotes: 'Field notes',
+  stack: 'Stack',
+  team: 'Team',
+}
+
 export type SocialLink = {
   label: string
   url: string

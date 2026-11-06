@@ -4,9 +4,10 @@ import type { Project } from '../data/projects'
 import { colors, ring } from '../theme'
 import { coverCrop, loadPanelFonts, makePlaceholderTexture } from './panelTexture'
 
-// One curved project panel with a thin gold frame.
+// One curved project panel with a thin gold frame and a dark back.
 // It's a slice of a big cylinder centered on the character, sitting behind her (the -z side).
-// ProjectRing rotates copies of it into a circle.
+// ProjectRing rotates copies of it into a circle, and animates hover, flattening and flying.
+// userData.role tags each mesh so ProjectRing can find the frame and the picture.
 export default function ProjectPanel({ project }: { project: Project }) {
   // build the curved shapes once (useMemo = don't rebuild on every re-render)
   const pictureGeometry = useMemo(
@@ -28,26 +29,26 @@ export default function ProjectPanel({ project }: { project: Project }) {
   return (
     <group position={[0, ring.panelY, 0]}>
       {/* gold frame: only its inside is drawn (BackSide), so only the thin border shows */}
-      <mesh geometry={frameGeometry}>
+      <mesh geometry={frameGeometry} userData={{ role: 'frame' }}>
         <meshStandardMaterial
           color={colors.gold}
           metalness={0.6}
           roughness={0.35}
           emissive={colors.gold}
-          emissiveIntensity={0.15}
+          emissiveIntensity={ring.frameGlow}
           side={THREE.BackSide}
           transparent // lets ProjectRing fade it in and out
         />
       </mesh>
       {/* the panel's back: the outside of the same shape, dark (FrontSide = outside only) */}
-      <mesh geometry={frameGeometry}>
+      <mesh geometry={frameGeometry} userData={{ role: 'back' }}>
         <meshStandardMaterial color={colors.background} roughness={0.9} side={THREE.FrontSide} transparent />
       </mesh>
 
       {/* the picture, on the inside of the curve (BackSide), once its texture is ready */}
       {/* renderOrder 1 = drawn after the frame, so the see-through fade layers correctly */}
       {texture && (
-        <mesh geometry={pictureGeometry} renderOrder={1}>
+        <mesh geometry={pictureGeometry} renderOrder={1} userData={{ role: 'picture' }}>
           <meshStandardMaterial
             map={texture}
             emissiveMap={texture} // glow with the picture's own colors...
@@ -96,7 +97,8 @@ function usePanelTexture(project: Project) {
   return texture
 }
 
-// A curved slice of an open cylinder, centered behind the character.
+// A curved slice of an open cylinder, centered behind the character,
+// plus a "flat" version of the same points (a morph target) used when the panel opens.
 function makeCurvedGeometry(radius: number, width: number, height: number) {
   // angle (in radians) the panel covers = arc length / radius
   const arc = width / radius
@@ -117,5 +119,18 @@ function makeCurvedGeometry(radius: number, width: number, height: number) {
   for (let i = 0; i < uv.count; i++) {
     uv.setX(i, 1 - uv.getX(i))
   }
+
+  // the flat shape: unroll the curve. each point keeps its distance along the arc and its height,
+  // and moves onto one flat wall at depth -radius
+  const curved = geometry.attributes.position
+  const flat = new Float32Array(curved.count * 3)
+  for (let i = 0; i < curved.count; i++) {
+    let angle = Math.atan2(curved.getX(i), curved.getZ(i)) // where this point sits around the circle
+    if (angle < 0) angle += Math.PI * 2 // keep it near Math.PI, no jump from -PI to PI
+    flat[i * 3] = -(angle - Math.PI) * radius // distance along the arc becomes sideways position
+    flat[i * 3 + 1] = curved.getY(i)
+    flat[i * 3 + 2] = -radius
+  }
+  geometry.morphAttributes.position = [new THREE.BufferAttribute(flat, 3)]
   return geometry
 }
