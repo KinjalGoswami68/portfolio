@@ -227,10 +227,11 @@
   bottom: 72px; /* above the footer bar */
   left: 50%;
   transform: translateX(-50%);
-  padding: 14px 44px;
+  padding: 14px 40px;
   font-family: var(--font-title), sans-serif;
   font-size: 1.3rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.08em; /* less spacing than before: the text is longer now */
+  white-space: nowrap; /* "Wanna know more?" stays on one line, the button grows to fit */
   color: var(--gold);
   background: color-mix(in srgb, var(--background) 60%, transparent);
   border: 1px solid var(--gold);
@@ -266,28 +267,6 @@
 .back-link:hover {
   color: var(--soft-white);
 }
-.hero-badge {
-  position: absolute;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  padding: 8px 20px;
-  border: 1px solid var(--gold);
-  border-radius: 999px;
-  font: inherit;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  background: color-mix(in srgb, var(--background) 60%, transparent);
-  cursor: pointer;
-  box-shadow: 0 0 14px color-mix(in srgb, var(--gold) 30%, transparent);
-  transition: box-shadow 0.3s ease;
-}
-.hero-badge:hover {
-  box-shadow: 0 0 24px color-mix(in srgb, var(--gold) 60%, transparent);
-}
-
 /* ---- keyboard buttons for the panels: invisible until Tab reaches one ---- */
 .panel-buttons {
   margin: 0;
@@ -463,12 +442,6 @@
 .project-detail a:focus-visible {
   outline: 2px solid var(--gold-bright);
   outline-offset: 3px;
-}
-
-/* badge tucks away while reading the chapters */
-.hero-badge.is-tucked {
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* ---- chapters below the ring: cards that slide in over the 3D ---- */

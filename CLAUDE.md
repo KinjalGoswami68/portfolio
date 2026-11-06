@@ -23,7 +23,7 @@ I'm Kinjal, a self-taught AI/ML student learning 3D web dev with this project. T
 2. after each part or stage: `npm run lint`, `npm run build`, fix anything broken, commit locally ("part X: ..." / "stage N: ..."). never push or deploy unless i ask
 3. ask before installing any package not listed below, and say why
 4. ALL words and links come from CONTENT.md, word for word. never invent facts, links or numbers. a missing value stays a visible TODO
-5. proper casing everywhere: acronyms stay uppercase (LLM, LLMs, AI, ML, CS, API, RAG, PR, CLI), names are capitalized (Cryptonix, Khushi Kushwaha, Ambar Gupta, Chhavi Gupta, Infinity Loop, Leash, SentinelAI, AgentSeal, HonmaruAI), otherwise only the first letter of each sentence, label and button is capitalized. exceptions: "HackIndia" as written, "arkor" stays lowercase (the project's own name), KINJAL GOSWAMI stays all caps on the intro
+5. proper casing everywhere: acronyms stay uppercase (LLM, LLMs, AI, ML, CS, API, RAG, PR, CLI), names are capitalized (Leash, SentinelAI, AgentSeal, HonmaruAI), otherwise only the first letter of each sentence, label and button is capitalized. exceptions: "HackIndia" as written, "arkor" stays lowercase (the project's own name), KINJAL GOSWAMI stays all caps on the intro
 6. no em-dashes anywhere on the site
 7. every link must work. external links open in a new tab (rel="noopener noreferrer", hidden "(opens in new tab)" text for screen readers)
 8. inspiration is yuusuke.work. recreate the TECHNIQUES only. never copy its assets, images, text, fonts or branding
@@ -82,7 +82,7 @@ a warrior girl, my style, from `kinjal.vrm`. keep the placeholder (simple femini
 
 - the site opens with the camera close on her, upper body framed, her spot on the right half of the screen. the ring is hidden
 - the left half shows the intro from CONTENT.md: small line (big), name (bright luminous gold), line 1, line 2, facts as small glowing pills that pop in one by one with a little sparkle. no links on the intro screen
-- a glowing "Enter" button at center bottom. clicking it (or pressing Enter, or scrolling down) smoothly pulls the camera back and up to reveal her standing in the ring. the intro fades out, the ring and the hero badge fade in
+- a glowing "Wanna know more?" button at center bottom. clicking it (or pressing Enter on the keyboard, or scrolling down) smoothly pulls the camera back and up to reveal her standing in the ring. the intro fades out, the ring fades in
 - a small "Back to intro" link returns to the close-up
 - fully keyboard accessible. reduced-motion = instant cut instead of a camera move, no pill pop
 
@@ -104,7 +104,7 @@ a warrior girl, my style, from `kinjal.vrm`. keep the placeholder (simple femini
 - clicking a panel: it flies to the front, flattens, scales up, the rest of the ring dims, gold sparkles burst around it. a detail card opens with everything from CONTENT.md for that project: name, badge, what it is, the demo / try it / honest limit (if any), field notes, stack as pills, team, and big link buttons (Repo, Live, Arena, PR), all opening in a new tab
 - close with an X button, Esc, or clicking outside. the panel flies back
 - each project has a URL hash (#leash) so a link can open it directly
-- the hero badge (1st Prize · Hacktoberfest Hack Day 2026) opens the leash panel
+- no banner at the top of the ring view. the prize lives on the leash card and in the Wins chapter
 - keyboard: Tab can reach every project (hidden HTML buttons mirroring the panels), Enter opens
 
 ## chapters (below the ring)

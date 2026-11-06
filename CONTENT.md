@@ -18,7 +18,7 @@ facts (small glowing pills):
 - I build ML models, AI agents
 - Currently: AI Intern at DataFlirt
 (the fiction line lives in the Who Am I chapter, not on the intro)
-button: Enter
+button: Wanna know more?
 
 ---
 
@@ -31,7 +31,6 @@ copyright (right end of the bar): © 2026 Kinjal Goswami
 
 ## hero (the ring view)
 
-badge (clickable, opens the leash panel): 1st Prize · Hacktoberfest Hack Day 2026
 back link (returns to the intro): Back to intro
 not shown yet:
 - big name: Kinjal
@@ -60,7 +59,7 @@ what it is: A smart-contract vault that holds money for an AI agent. The agent g
 the demo: We hid a "pay this wallet" line inside a vendor email. The model fell for it. The contract blocked it on-chain and logged why.
 try it: There's a jailbreak arena. Three vaults, same agent, different rules. Fool the agent and see which vault still says no.
 honest limit: The daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. A sliding window would cost more gas.
-team: Team Cryptonix with Khushi Kushwaha, Ambar Gupta and Chhavi Gupta. Faculty of Engineering and Technology, University of Lucknow
+team: Team project · My part: TODO (what i built)
 stack: Solidity · OpenZeppelin · Hardhat · Base Sepolia · Python · FastAPI · web3.py · gpt-oss-120b on Groq · Next.js
 links:
 - Live: https://leash-agent.vercel.app
@@ -105,7 +104,7 @@ links (no repo link, the repo is empty):
 badge: HackIndia '26 finalist · 122 teams
 panel line: Every decision the agent makes gets signed. Nobody edits it later.
 what it is: An AI decision audit and tamper-detection system. Ethereum-style signing, a LangChain/Groq agent and a Solidity contract on the Polygon Amoy testnet, so any decision can be verified later and can't be quietly changed.
-team: Team Infinity Loop
+team: Team project · My part: TODO (what i built)
 stack: Solidity · Polygon Amoy · LangChain · Groq · Ethereum-style signing
 links: none (no repo button)
 
@@ -152,7 +151,7 @@ Building the systems that collect, store and serve data: self-healing Python scr
 -> Learned web dev first. Realised I couldn't see myself doing it long term
 -> Got into ML because of the hype, honestly. It stayed. It's the one I'm keeping
 -> Now going deeper into LLMs, fine-tuning and RAG
--> I write fiction. One story crossed 33K views
+-> I once wrote fiction. One story crossed 33K views. Deleted it because I thought nobody in tech would care
 -> Off screen: skincare. A lot of it
 
 ### Numbers (count up when they scroll into view)

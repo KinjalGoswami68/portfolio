@@ -45,7 +45,6 @@ export default function App() {
   const appRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<{ x: number; y: number } | null>(null) // last pointer spot while dragging, null = not dragging
-  const [inChapters, setInChapters] = useState(false) // scrolled down into the chapters?
 
   // tell the 3D side which view we're in. leaving the ring: reset scroll and hover
   useEffect(() => {
@@ -74,7 +73,6 @@ export default function App() {
   }
   function backToIntro() {
     closeProject()
-    setInChapters(false)
     setView('intro')
   }
 
@@ -129,7 +127,12 @@ export default function App() {
     if (view !== 'intro') return
     function onKey(event: KeyboardEvent) {
       // if a link or button has focus, Enter already activates it. don't double up
-      if (event.key === 'Enter' && event.target === document.body) setView('ring')
+      if (event.key === 'Enter' && event.target === document.body) {
+        // preventDefault: the ring view puts focus on its Back to intro button right away.
+        // without this, the rest of this same key press would "click" that button and come straight back
+        event.preventDefault()
+        setView('ring')
+      }
     }
     function onWheel(event: WheelEvent) {
       if (event.deltaY > 0) setView('ring')
@@ -175,7 +178,6 @@ export default function App() {
           const scrollable = element.scrollHeight - screen - chaptersStart
           const progress = (element.scrollTop - chaptersStart) / Math.max(scrollable, 1)
           sceneState.chapterProgress = THREE.MathUtils.clamp(progress, 0, 1)
-          setInChapters(progress > 0.02) // React skips the redraw if it didn't change
         }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -192,7 +194,7 @@ export default function App() {
 
       <div className="overlay">
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
-        <RingHud shown={view === 'ring'} inChapters={inChapters} onBack={backToIntro} onOpen={openProject} />
+        <RingHud shown={view === 'ring'} onBack={backToIntro} onOpen={openProject} />
         <Footer />
         <ProjectDetail project={openIndex >= 0 ? projects[openIndex] : null} onClose={closeProject} />
       </div>

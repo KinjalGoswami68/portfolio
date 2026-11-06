@@ -5,14 +5,13 @@ import { sceneState } from '../sceneState'
 
 type Props = {
   shown: boolean
-  inChapters: boolean // reading the chapters: hide the badge so it doesn't sit on top of them
   onBack: () => void
   onOpen: (index: number) => void
 }
 
-// What sits over the ring view: the Back to intro link, the hero badge (opens Leash),
+// What sits over the ring view: the Back to intro link,
 // and one hidden button per panel so the keyboard can reach every project.
-export default function RingHud({ shown, inChapters, onBack, onOpen }: Props) {
+export default function RingHud({ shown, onBack, onOpen }: Props) {
   const backRef = useRef<HTMLButtonElement>(null)
   const wasShown = useRef(shown)
 
@@ -22,22 +21,11 @@ export default function RingHud({ shown, inChapters, onBack, onOpen }: Props) {
     wasShown.current = shown
   }, [shown])
 
-  const leashIndex = projects.findIndex((project) => project.id === 'leash')
-
   return (
     <div className={`ring-hud ${shown ? '' : 'is-hidden'}`} inert={!shown}>
       {/* a button, not a link: it changes the view, it doesn't go to another page */}
       <button ref={backRef} type="button" className="back-link" onClick={onBack}>
         {hero.backLink}
-      </button>
-
-      <button
-        type="button"
-        className={`hero-badge ${inChapters ? 'is-tucked' : ''}`}
-        onClick={() => onOpen(leashIndex)}
-        tabIndex={inChapters ? -1 : undefined}
-      >
-        <span className="title-shimmer">{hero.badge}</span>
       </button>
 
       {/* keyboard path to the panels: invisible until focused. focusing one also "hovers" its panel */}

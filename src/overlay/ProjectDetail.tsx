@@ -103,7 +103,8 @@ function Section({ title, text }: { title: string; text: string }) {
   return (
     <section>
       <h3>{title}</h3>
-      <p>
+      {/* a TODO is shown in the "missing content" style, so it can't be missed */}
+      <p className={text.includes('TODO') ? 'todo' : undefined}>
         <WithCode text={text} />
       </p>
     </section>

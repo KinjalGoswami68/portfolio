@@ -10,11 +10,10 @@ export const intro = {
     'I build ML models, AI agents',
     'Currently: AI Intern at DataFlirt',
   ],
-  button: 'Enter',
+  button: 'Wanna know more?',
 }
 
 export const hero = {
-  badge: '1st Prize · Hacktoberfest Hack Day 2026',
   backLink: 'Back to intro',
 }
 
@@ -102,7 +101,7 @@ export const chapters = {
       "Learned web dev first. Realised I couldn't see myself doing it long term",
       "Got into ML because of the hype, honestly. It stayed. It's the one I'm keeping",
       'Now going deeper into LLMs, fine-tuning and RAG',
-      'I write fiction. One story crossed 33K views',
+      'I once wrote fiction. One story crossed 33K views. Deleted it because I thought nobody in tech would care',
       'Off screen: skincare. A lot of it',
     ],
   },
