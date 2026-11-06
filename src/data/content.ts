@@ -51,3 +51,80 @@ export const resume = {
   url: `${import.meta.env.BASE_URL}resume/Kinjal_Resume.pdf`,
   missing: 'TODO: copy the pdf into public/resume/', // shown while the pdf doesn't exist
 }
+
+// ---- chapters below the ring (CONTENT.md "chapters") ----
+
+export const chapters = {
+  rightNow: {
+    title: 'Right Now',
+    role: 'AI Data Acquisition Intern · DataFlirt (Bengaluru, Remote) · Oct to Dec 2026',
+    text: 'Building the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and keeping LLM token costs measured.',
+  },
+  wins: {
+    title: 'Wins',
+    // opens = the id of the project panel it opens
+    items: [
+      { text: '1st Prize · Hacktoberfest Hack Day 2026 · Leash', opens: 'leash' },
+      { text: "Finalist · HackIndia '26 · 122 teams · AgentSeal", opens: 'agentseal' },
+      { text: 'Infosys STEM Stars Scholarship · 2025 to 2026' },
+      { text: 'Google Cloud Certificate · Introduction to Generative AI' },
+    ] as { text: string; opens?: string }[],
+  },
+  openSource: {
+    title: 'Open Source',
+    items: [
+      {
+        text: 'arkor · merged PR · port-fallback fix in the arkor dev CLI',
+        url: 'https://github.com/arkorlab/fine-tuning/pull/212',
+      },
+      {
+        text: 'HonmaruAI · merged PR · 27 commits · auth and real-time sync',
+        url: 'https://github.com/Torutesu/HonmaruAI/pull/10',
+      },
+    ],
+  },
+  education: {
+    title: 'Education',
+    items: [
+      {
+        years: '2025 to 2029',
+        text: 'B.Tech, Computer Science & Engineering · University of Lucknow · cGPA 7.1/10 (first year)',
+      },
+      { years: '2023 to 2024', text: 'Class XII, CBSE · Dron Public School, Meerut · 90%' },
+      { years: '2021 to 2022', text: 'Class X, CBSE · Dron Public School, Meerut · 94.8%' },
+    ],
+  },
+  whoAmI: {
+    title: 'Who Am I',
+    lines: [
+      '2nd year CS student at University of Lucknow',
+      "Learned web dev first. Realised I couldn't see myself doing it long term",
+      "Got into ML because of the hype, honestly. It stayed. It's the one I'm keeping",
+      'Now going deeper into LLMs, fine-tuning and RAG',
+      'I write fiction. One story crossed 33K views',
+      'Off screen: skincare. A lot of it',
+    ],
+  },
+  numbers: {
+    title: 'Numbers',
+    items: [
+      { value: '100+', label: 'day LeetCode streak' },
+      { value: '150+', label: 'DSA problems solved' },
+      { value: '34', label: 'legal risk categories my model reads' },
+      { value: '1st', label: 'prize at Hacktoberfest Hack Day 2026' },
+    ],
+  },
+  writing: {
+    title: 'Writing',
+    text: 'Build logs and breakdowns, posted while things are still broken.',
+    links: [
+      { label: 'X', url: 'https://x.com/KGoswami70' },
+      { label: 'Medium', url: 'https://medium.com/@kinjalgoswami682' },
+    ],
+  },
+  contact: {
+    title: 'Contact',
+    line: 'If this looks like the kind of work you want on your team,',
+    email: 'kinjalgoswami682@gmail.com',
+  },
+}

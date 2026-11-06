@@ -5,13 +5,14 @@ import { sceneState } from '../sceneState'
 
 type Props = {
   shown: boolean
+  inChapters: boolean // reading the chapters: hide the badge so it doesn't sit on top of them
   onBack: () => void
   onOpen: (index: number) => void
 }
 
 // What sits over the ring view: the Back to intro link, the hero badge (opens Leash),
 // and one hidden button per panel so the keyboard can reach every project.
-export default function RingHud({ shown, onBack, onOpen }: Props) {
+export default function RingHud({ shown, inChapters, onBack, onOpen }: Props) {
   const backRef = useRef<HTMLButtonElement>(null)
   const wasShown = useRef(shown)
 
@@ -30,7 +31,12 @@ export default function RingHud({ shown, onBack, onOpen }: Props) {
         {hero.backLink}
       </button>
 
-      <button type="button" className="hero-badge" onClick={() => onOpen(leashIndex)}>
+      <button
+        type="button"
+        className={`hero-badge ${inChapters ? 'is-tucked' : ''}`}
+        onClick={() => onOpen(leashIndex)}
+        tabIndex={inChapters ? -1 : undefined}
+      >
         <span className="title-shimmer">{hero.badge}</span>
       </button>
 

@@ -431,6 +431,222 @@
   outline-offset: 3px;
 }
 
+/* badge tucks away while reading the chapters */
+.hero-badge.is-tucked {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---- chapters below the ring: cards that slide in over the 3D ---- */
+.chapters {
+  display: flex;
+  flex-direction: column;
+  gap: 28vh; /* room between chapters, so the scene shows through */
+  width: min(720px, calc(100vw - 48px));
+  margin: 0 auto;
+  padding: 10vh 0 30vh;
+  font-family: var(--font-body), sans-serif;
+  color: var(--soft-white);
+  user-select: text;
+}
+.chapter {
+  padding: 28px 32px;
+  background: color-mix(in srgb, var(--background) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  border-radius: 18px;
+  backdrop-filter: blur(6px);
+  line-height: 1.6;
+  /* hidden until it scrolls into view, then it slides up and fades in */
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.chapter.is-visible {
+  opacity: 1;
+  transform: none;
+}
+.chapter p {
+  margin: 0 0 10px;
+}
+.chapter-title {
+  margin: 0 0 14px;
+  font-family: var(--font-title), sans-serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+}
+.chapter-role {
+  color: var(--gold-bright);
+  font-weight: 600;
+}
+.chapter a {
+  color: var(--gold);
+}
+.chapter a:hover,
+.chapter a:focus-visible {
+  color: var(--gold-bright);
+}
+.chapter-list,
+.arrow-list,
+.writing-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.chapter-list li,
+.arrow-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--rose-grey) 18%, transparent);
+}
+.chapter-list li:last-child,
+.arrow-list li:last-child {
+  border-bottom: none;
+}
+.win-button {
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  color: var(--gold);
+  background: none;
+  border: none;
+  border-bottom: 1px dashed color-mix(in srgb, var(--gold) 60%, transparent);
+  cursor: pointer;
+}
+.win-button:hover,
+.win-button:focus-visible {
+  color: var(--gold-bright);
+}
+.arrow {
+  color: var(--gold);
+  font-weight: 600;
+}
+.writing-links {
+  display: flex;
+  gap: 20px;
+}
+
+/* education: a vertical timeline, a gold line with a glowing dot per step */
+.timeline {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 26px;
+  list-style: none;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: linear-gradient(var(--gold), color-mix(in srgb, var(--gold) 20%, transparent));
+}
+.timeline li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 18px;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 10px var(--gold);
+}
+.timeline-years {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* numbers: big gold values */
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.numbers li {
+  display: flex;
+  flex-direction: column;
+}
+.number-value {
+  font-family: var(--font-title), sans-serif;
+  font-size: 3rem;
+  line-height: 1;
+}
+.number-label {
+  font-size: 0.9rem;
+  color: var(--rose-grey);
+}
+
+/* contact: the big line and the big email, which sparkles on hover */
+.contact-line {
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.3;
+}
+.chapter .contact-email {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-title), sans-serif;
+  font-size: clamp(1.4rem, 3.6vw, 2.6rem);
+  letter-spacing: 0.02em;
+  color: var(--gold-bright);
+  text-decoration: none;
+  transition: text-shadow 0.3s ease;
+}
+.chapter .contact-email:hover,
+.chapter .contact-email:focus-visible {
+  text-shadow: 0 0 18px var(--gold), 0 0 4px var(--gold-bright);
+}
+/* two little stars that twinkle around it on hover */
+.contact-email::before,
+.contact-email::after {
+  content: '✦';
+  position: absolute;
+  font-size: 1rem;
+  color: var(--gold-bright);
+  text-shadow: 0 0 8px var(--gold);
+  opacity: 0;
+  pointer-events: none;
+}
+.contact-email::before {
+  top: -14px;
+  left: -10px;
+}
+.contact-email::after {
+  bottom: -10px;
+  right: -14px;
+}
+.contact-email:hover::before,
+.contact-email:hover::after,
+.contact-email:focus-visible::before,
+.contact-email:focus-visible::after {
+  animation: email-twinkle 1.2s ease-in-out infinite;
+}
+.contact-email:hover::after,
+.contact-email:focus-visible::after {
+  animation-delay: 0.6s;
+}
+@keyframes email-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(45deg);
+  }
+}
+
 /* ---- gold shimmer on titles: a lighter band slowly sliding across ---- */
 .title-shimmer {
   background: linear-gradient(100deg, var(--gold) 40%, var(--soft-white) 50%, var(--gold) 60%);
@@ -468,6 +684,15 @@
   }
   .detail-card {
     animation: none;
+  }
+  .chapter {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .contact-email::before,
+  .contact-email::after {
+    animation: none !important;
   }
   .fact-pill::after {
     display: none;

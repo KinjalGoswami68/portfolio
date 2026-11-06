@@ -49,9 +49,11 @@ export const cameraViews = {
   intro: { position: [-0.6, 1.5, 1.9], target: [-0.6, 1.4, 0] },
   // high and back: the whole ring
   ring: { position: [0, 6, 10], target: [0, 1, 0] },
+  // while reading the chapters: pulled back further and risen, the scene stays alive behind
+  chapters: { position: [0, 9, 16], target: [0, 2, 0] },
   moveSpeed: 2.2, // how quickly the camera glides between spots (higher = faster)
   // gentle drift with the mouse (units the camera moves at the screen edge)
-  drift: { intro: [0.08, 0.05], ring: [0.8, 0.4] },
+  drift: { intro: [0.08, 0.05], ring: [0.8, 0.4], chapters: [0.8, 0.4] },
 } as const
 
 export const character = {

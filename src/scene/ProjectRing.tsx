@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import { Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import { projects } from '../data/projects'
@@ -126,10 +126,11 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
     }
   })
 
-  // a click only counts if the mouse didn't move much (otherwise it was a drag)
-  function handleClick(event: { delta: number; stopPropagation: () => void }, i: number) {
+  // a click only counts if the mouse didn't move much (otherwise it was a drag),
+  // and not if it landed on HTML (a link, button or chapter card) that sits on top of the panel
+  function handleClick(event: ThreeEvent<MouseEvent>, i: number) {
     event.stopPropagation()
-    if (event.delta > 6) return
+    if (event.delta > 6 || pointerIsOnHtml(event)) return
     if (sceneState.ringActive && openIndex < 0 && presenceRef.current[i] > 0.5) onOpen(i)
   }
 
@@ -146,7 +147,7 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
             onPointerOver={(event) => {
               event.stopPropagation() // only the nearest panel counts
               // only real, visible panels in the ring view can be hovered (and not while one is open)
-              if (sceneState.ringActive && openIndex < 0 && presenceRef.current[i] > 0.5) {
+              if (sceneState.ringActive && openIndex < 0 && presenceRef.current[i] > 0.5 && !pointerIsOnHtml(event)) {
                 sceneState.hoveredIndex = i
                 document.body.style.cursor = 'pointer'
               }
@@ -173,6 +174,12 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
       </group>
     </>
   )
+}
+
+// The mouse events reach the 3D through the page (eventSource), so check what's really under the mouse.
+function pointerIsOnHtml(event: ThreeEvent<PointerEvent | MouseEvent>) {
+  const target = event.nativeEvent.target
+  return target instanceof Element && target.closest('a, button, .chapter, .footer-bar') !== null
 }
 
 // Where an open panel floats: in front of the camera, a bit to the left (the card is on the right),

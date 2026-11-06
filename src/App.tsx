@@ -9,9 +9,11 @@ import Intro from './overlay/Intro'
 import RingHud from './overlay/RingHud'
 import Footer from './overlay/Footer'
 import ProjectDetail from './overlay/ProjectDetail'
+import Chapters from './overlay/Chapters'
 import { projects } from './data/projects'
 import { cameraViews, colors, effects, fonts, ring } from './theme'
 import { sceneState } from './sceneState'
+import * as THREE from 'three'
 import './overlay/overlay.css'
 
 // which screen we're on: the close-up intro, or the full ring
@@ -43,6 +45,7 @@ export default function App() {
   const appRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<number | null>(null) // last pointer x while dragging, null = not dragging
+  const [inChapters, setInChapters] = useState(false) // scrolled down into the chapters?
 
   // tell the 3D side which view we're in. leaving the ring: reset scroll and hover
   useEffect(() => {
@@ -50,6 +53,7 @@ export default function App() {
     if (view === 'intro') {
       sceneState.hoveredIndex = -1
       sceneState.scrollScreens = 0
+      sceneState.chapterProgress = 0
       scrollerRef.current?.scrollTo({ top: 0 })
     }
   }, [view])
@@ -68,6 +72,7 @@ export default function App() {
   }
   function backToIntro() {
     closeProject()
+    setInChapters(false)
     setView('intro')
   }
 
@@ -84,7 +89,9 @@ export default function App() {
 
   // dragging sideways in the ring view spins the ring
   function onPointerDown(event: React.PointerEvent) {
-    if (view === 'ring' && event.button === 0) dragRef.current = event.clientX
+    // not when pressing a link or button, or on a chapter card (you might be selecting text)
+    const onHtml = event.target instanceof Element && event.target.closest('a, button, .chapter')
+    if (view === 'ring' && event.button === 0 && !onHtml) dragRef.current = event.clientX
   }
   function onPointerMove(event: React.PointerEvent) {
     if (dragRef.current === null) return
@@ -139,7 +146,14 @@ export default function App() {
         className={`scroller ${view === 'ring' ? 'can-scroll' : ''}`}
         onScroll={(event) => {
           const element = event.currentTarget
-          sceneState.scrollScreens = element.scrollTop / element.clientHeight
+          const screen = element.clientHeight
+          sceneState.scrollScreens = element.scrollTop / screen
+          // the chapters start coming up from the bottom once the ring zone is scrolled past
+          const chaptersStart = (ring.scrollScreens - 1) * screen
+          const scrollable = element.scrollHeight - screen - chaptersStart
+          const progress = (element.scrollTop - chaptersStart) / Math.max(scrollable, 1)
+          sceneState.chapterProgress = THREE.MathUtils.clamp(progress, 0, 1)
+          setInChapters(progress > 0.02) // React skips the redraw if it didn't change
         }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -147,11 +161,15 @@ export default function App() {
         onPointerLeave={onPointerUp}
       >
         <div className="ring-zone" style={{ height: `${ring.scrollScreens * 100}%` }} />
+        {/* the chapters, below the ring zone. only in the ring view */}
+        <div inert={view !== 'ring'}>
+          <Chapters onOpen={openProject} />
+        </div>
       </div>
 
       <div className="overlay">
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
-        <RingHud shown={view === 'ring'} onBack={backToIntro} onOpen={openProject} />
+        <RingHud shown={view === 'ring'} inChapters={inChapters} onBack={backToIntro} onOpen={openProject} />
         <Footer />
         <ProjectDetail project={openIndex >= 0 ? projects[openIndex] : null} onClose={closeProject} />
       </div>

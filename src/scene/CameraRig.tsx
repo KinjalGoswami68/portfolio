@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { cameraViews } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import type { View } from '../App'
+import { sceneState } from '../sceneState'
 
 // Glides the camera between the intro close-up and the ring view,
 // and lets it drift gently with the mouse.
@@ -15,6 +16,12 @@ export default function CameraRig({ view }: { view: View }) {
     const goal = cameraViews[view]
     const goalPosition = new THREE.Vector3(...goal.position)
     const goalTarget = new THREE.Vector3(...goal.target)
+    // in the ring view, scrolling into the chapters blends toward the pulled-back "chapters" spot
+    if (view === 'ring' && !prefersReducedMotion) {
+      const blend = THREE.MathUtils.smoothstep(sceneState.chapterProgress, 0, 0.6)
+      goalPosition.lerp(new THREE.Vector3(...cameraViews.chapters.position), blend)
+      goalTarget.lerp(new THREE.Vector3(...cameraViews.chapters.target), blend)
+    }
 
     if (prefersReducedMotion) {
       // instant cut, no drift
