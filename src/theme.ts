@@ -7,6 +7,7 @@ export const colors = {
   cherry: '#9E1B32', // cherry red
   cherryGlow: '#D2042D', // glowing cherry (floor glow, highlights)
   gold: '#E8C27A', // champagne gold (titles, sparkle, thin frames)
+  goldBright: '#FFE6A8', // bright gold highlight (the shine on titles, so gold never looks dull brown)
   softWhite: '#F4EDEE', // body text
   roseGrey: '#B9A7AB', // secondary text
 }

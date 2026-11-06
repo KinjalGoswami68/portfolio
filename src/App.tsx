@@ -17,6 +17,7 @@ const themeVariables = {
   '--background': colors.background,
   '--cherry-glow': colors.cherryGlow,
   '--gold': colors.gold,
+  '--gold-bright': colors.goldBright,
   '--soft-white': colors.softWhite,
   '--rose-grey': colors.roseGrey,
   '--font-title': `'${fonts.title}'`,

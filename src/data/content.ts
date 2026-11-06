@@ -2,43 +2,40 @@
 // 'TODO' = not given yet. It stays visible on the site until it's filled in.
 
 export const intro = {
-  smallLine: "hi, i'm",
+  smallLine: "Hi, I'm",
   name: 'KINJAL GOSWAMI',
-  line: 'ml engineer. 2nd year cs at university of lucknow. ai data acquisition intern at dataflirt.',
+  lines: ['ML Engineer.', '2nd Year CS Student.'],
   facts: [
-    'won 1st prize at hacktoberfest hack day 2026 with leash',
-    'i build ml systems end to end, then write about what broke',
-    'right now: llms, fine-tuning and rag',
-    'i write fiction too. one story crossed 33k views',
-    'off screen: TODO (my hobbies)',
+    'Won 1st Prize at Hacktoberfest Hack Day 2026',
+    'I build ML models, AI agents',
+    'Currently: AI Intern at DataFlirt',
+    'I also wrote fiction story that crossed 33K views',
   ],
-  button: 'enter',
+  button: 'Enter',
 }
 
 export const hero = {
-  badge: '1st prize · hacktoberfest hack day 2026',
-  backLink: 'back to intro',
+  badge: '1st Prize · Hacktoberfest Hack Day 2026',
+  backLink: 'Back to intro',
 }
 
 export type SocialLink = {
   label: string
   url: string
   external: boolean // true = opens in a new tab
-  todo?: string // set = the link doesn't work yet, show this TODO instead of a link
 }
 
-// links from the contact section of CONTENT.md, in the intro's order
-export const socialLinks: SocialLink[] = [
-  { label: 'github', url: 'https://github.com/KinjalGoswami68', external: true },
-  { label: 'linkedin', url: 'https://linkedin.com/in/kinjal-goswami-03738a376', external: true },
-  { label: 'x', url: 'https://x.com/KGoswami70', external: true },
-  { label: 'medium', url: 'https://medium.com/@kinjalgoswami682', external: true },
-  { label: 'email', url: 'mailto:kinjalgoswami682@gmail.com', external: false },
-  {
-    label: 'resume',
-    url: `${import.meta.env.BASE_URL}resume/Kinjal_Resume.pdf`,
-    external: false,
-    // remove this line once the pdf is in public/resume/
-    todo: 'TODO: copy the pdf into public/resume/',
-  },
+// the footer bar links, from CONTENT.md "footer bar"
+export const footerLinks: SocialLink[] = [
+  { label: 'GitHub', url: 'https://github.com/KinjalGoswami68', external: true },
+  { label: 'LinkedIn', url: 'https://linkedin.com/in/kinjal-goswami-03738a376', external: true },
+  { label: 'X', url: 'https://x.com/KGoswami70', external: true },
+  { label: 'Medium', url: 'https://medium.com/@kinjalgoswami682', external: true },
+  { label: 'Email', url: 'mailto:kinjalgoswami682@gmail.com', external: false },
 ]
+
+export const resume = {
+  label: 'Resume',
+  url: `${import.meta.env.BASE_URL}resume/Kinjal_Resume.pdf`,
+  missing: 'TODO: copy the pdf into public/resume/', // shown while the pdf doesn't exist
+}
