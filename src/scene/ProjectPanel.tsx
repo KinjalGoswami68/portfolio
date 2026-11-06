@@ -1,48 +1,104 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import * as THREE from 'three'
-import { useTexture } from '@react-three/drei'
 import type { Project } from '../data/projects'
 import { colors, ring } from '../theme'
-import { makePlaceholderTexture } from './placeholderTexture'
+import { coverCrop, loadPanelFonts, makePlaceholderTexture } from './panelTexture'
 
-type Props = {
-  project: Project
-  index: number // position in the list, used to pick a placeholder color
-}
-
-// One curved project panel: a thin slice of a big cylinder centered on the character.
-// It sits behind the character (the -z side). ProjectRing rotates copies into a circle.
-export default function ProjectPanel({ project, index }: Props) {
-  // build the curved shape once (useMemo = don't rebuild on every re-render)
-  const geometry = useMemo(() => makeCurvedGeometry(), [])
+// One curved project panel with a thin gold frame.
+// It's a slice of a big cylinder centered on the character, sitting behind her (the -z side).
+// ProjectRing rotates copies of it into a circle.
+export default function ProjectPanel({ project }: { project: Project }) {
+  // build the curved shapes once (useMemo = don't rebuild on every re-render)
+  const pictureGeometry = useMemo(
+    () => makeCurvedGeometry(ring.radius, ring.panelWidth, ring.panelHeight),
+    [],
+  )
+  // the frame: a slightly bigger slice just behind the picture. only its edge peeks out
+  const frameGeometry = useMemo(
+    () =>
+      makeCurvedGeometry(
+        ring.radius + 0.03,
+        ring.panelWidth + ring.frameThickness * 2,
+        ring.panelHeight + ring.frameThickness * 2,
+      ),
+    [],
+  )
+  const texture = usePanelTexture(project)
 
   return (
     <group position={[0, ring.panelY, 0]}>
-      {/* inner face: the picture, facing the character */}
-      <mesh geometry={geometry}>
-        {project.image ? (
-          <ImageMaterial file={project.image} />
-        ) : (
-          <PlaceholderMaterial title={project.title} index={index} />
-        )}
+      {/* gold frame. DoubleSide = its outside is also the panel's back */}
+      <mesh geometry={frameGeometry}>
+        <meshStandardMaterial
+          color={colors.gold}
+          metalness={0.6}
+          roughness={0.35}
+          emissive={colors.gold}
+          emissiveIntensity={0.15}
+          side={THREE.DoubleSide}
+        />
       </mesh>
-      {/* outer face: a plain dark back */}
-      <mesh geometry={geometry}>
-        <meshBasicMaterial color={colors.panelBack} side={THREE.FrontSide} />
-      </mesh>
+
+      {/* the picture, on the inside of the curve (BackSide), once its texture is ready */}
+      {texture && (
+        <mesh geometry={pictureGeometry}>
+          <meshStandardMaterial
+            map={texture}
+            emissiveMap={texture} // glow with the picture's own colors...
+            emissive="#ffffff" // ...white here means "don't tint the glow"
+            emissiveIntensity={ring.panelEmission}
+            roughness={0.6}
+            side={THREE.BackSide}
+            toneMapped={false} // show the picture's true colors
+          />
+        </mesh>
+      )}
     </group>
   )
 }
 
-function makeCurvedGeometry() {
+// Tries to load public/projects/<image>. If it isn't there yet, draws a placeholder card.
+function usePanelTexture(project: Project) {
+  const [texture, setTexture] = useState<THREE.Texture | null>(null)
+
+  useEffect(() => {
+    let cancelled = false // stops a late load from updating a removed panel
+    const url = `${import.meta.env.BASE_URL}projects/${project.image}` // BASE_URL keeps it working on GitHub Pages
+    new THREE.TextureLoader().load(
+      url,
+      (photo) => {
+        // screenshot found
+        if (cancelled) return
+        photo.colorSpace = THREE.SRGBColorSpace
+        coverCrop(photo, ring.panelWidth / ring.panelHeight)
+        setTexture(photo)
+      },
+      undefined,
+      () => {
+        // no screenshot yet: wait for fonts, then paint the placeholder
+        loadPanelFonts().then(() => {
+          if (!cancelled) setTexture(makePlaceholderTexture(project))
+        })
+      },
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [project])
+
+  return texture
+}
+
+// A curved slice of an open cylinder, centered behind the character.
+function makeCurvedGeometry(radius: number, width: number, height: number) {
   // angle (in radians) the panel covers = arc length / radius
-  const arc = ring.panelWidth / ring.radius
+  const arc = width / radius
   const geometry = new THREE.CylinderGeometry(
-    ring.radius, // radius at the top
-    ring.radius, // radius at the bottom (same = straight wall, not a cone)
-    ring.panelHeight,
+    radius, // radius at the top
+    radius, // radius at the bottom (same = straight wall, not a cone)
+    height,
     24, // segments around the curve (more = smoother bend)
-    1, // segments top to bottom (1 is enough for a flat-tall wall)
+    1, // segments top to bottom
     true, // openEnded: no lids on top and bottom
     Math.PI - arc / 2, // where the slice starts. Math.PI = behind the character
     arc, // how wide the slice is
@@ -55,24 +111,4 @@ function makeCurvedGeometry() {
     uv.setX(i, 1 - uv.getX(i))
   }
   return geometry
-}
-
-// Real screenshot from public/projects/.
-// BASE_URL keeps the path working later on GitHub Pages.
-function ImageMaterial({ file }: { file: string }) {
-  const texture = useTexture(`${import.meta.env.BASE_URL}projects/${file}`)
-  // BackSide = draw on the inside of the curve
-  // toneMapped false = show the picture's true colors, no extra color grading
-  return <meshBasicMaterial map={texture} side={THREE.BackSide} toneMapped={false} />
-}
-
-// Colored card with the title, until the screenshot exists.
-function PlaceholderMaterial({ title, index }: { title: string; index: number }) {
-  const background = colors.placeholders[index % colors.placeholders.length]
-  // paint the texture once, not on every re-render
-  const texture = useMemo(
-    () => makePlaceholderTexture(title, background, colors.placeholderText),
-    [title, background],
-  )
-  return <meshBasicMaterial map={texture} side={THREE.BackSide} toneMapped={false} />
 }

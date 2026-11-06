@@ -2,128 +2,106 @@
 
 ## who i am and how to work with me
 
-I'm Kinjal, a self-taught AI/ML student learning 3D web dev for the first time with this project. Treat this as mentoring, not just building:
+I'm Kinjal, a self-taught AI/ML student learning 3D web dev with this project. Treat this as mentoring, not just building:
 
-- work ONE PART at a time (parts are listed in the roadmap below). stop at the end of each part and wait for me
-- before writing code for a step, explain the concept in 2 to 4 plain lines, with an analogy if it helps. define every new 3D term the first time you use it (mesh, geometry, material, camera, texture, etc.)
+- work ONE PART at a time (roadmap below). stop at the end of each part and wait for me
+- before writing code for a step, explain the concept in 2 to 4 plain lines. define every new 3D term the first time you use it
 - after each step, tell me what i should see on screen
-- at the end of each part, give me ONE small "break it on purpose" experiment (change a value, see what happens)
-- keep components small and readable. i want to understand every file, so no clever abstractions
-- if something doesn't work or you aren't sure, say so. never say something works if you haven't checked it
+- at the end of each part, give me ONE "break it on purpose" experiment
+- keep components small and readable, no clever abstractions
+- if something doesn't work or you haven't checked it, say so. never claim it works if you haven't seen it run
 
 ## environment
 
-- Windows, PowerShell, VS Code, HP laptop with integrated graphics (keep the scene light)
+- Windows, PowerShell, VS Code, HP laptop with integrated graphics. keep the scene light (small textures, few lights, cap pixel ratio)
 - any command you give me must work in PowerShell
-- dev server runs with `npm run dev` (it may pick port 5174 or 5175 if 5173 is busy, that's fine)
+- `npm run dev` (port may be 5174/5175, that's fine)
 
 ## hard rules
 
-1. zero budget. only free, open-source packages and free assets. no paid APIs, no paid fonts, no paid models
-2. after each part: run `npm run lint` and `npm run build`, fix anything broken, then commit locally with a message like "part B: the world". never push, never deploy unless i ask
-3. ask before installing any package that isn't listed in the stack below, and say why it's needed
-4. never invent facts about me or my projects. if text or a link is missing, put a visible `TODO` and tell me
-5. the inspiration is yuusuke.work. recreate the TECHNIQUES (3D scene, ring of curved panels, scroll, overlay text), never copy its assets, images, text, fonts or branding. the result must look like mine
+1. zero budget. only free, open-source packages and free assets
+2. after each part: `npm run lint`, `npm run build`, fix anything broken, commit locally ("part X: ..."). never push or deploy unless i ask
+3. ask before installing any package not listed below, and say why
+4. ALL words and links come from CONTENT.md, word for word. never invent facts, links or numbers. a missing value stays a visible TODO
+5. no em-dashes anywhere on the site
+6. every link must work. external links open in a new tab (rel="noopener noreferrer", hidden "(opens in new tab)" text for screen readers)
+7. inspiration is yuusuke.work. recreate the TECHNIQUES only. never copy its assets, images, text, fonts or branding
 
 ## stack
 
-- Vite + React + TypeScript (already scaffolded, linter is oxlint)
-- three, @react-three/fiber (R3F), @react-three/drei (already installed)
-- later, ask before adding: @react-three/postprocessing (part F), gsap (only if drei can't do it)
-- 3D character: a free CC0 model from Quaternius (glTF/.glb), loaded with drei `useGLTF` + `useAnimations`
-- hosting later: GitHub Pages (free)
+- Vite + React + TypeScript (oxlint), three, @react-three/fiber, @react-three/drei
+- ask before adding (in the part where they're needed): @pixiv/three-vrm (part E), @react-three/postprocessing (part F)
+- character: a VRM file i make myself in VRoid Studio (free), at `public/models/kinjal.vrm`. animations from Mixamo (free), retargeted onto the VRM
+- hosting later: GitHub Pages
 
-## the concept
+## look and feel
 
-A two-layer website:
-1. back layer: a 3D scene. dark space with stars, a glowing floor, a character standing in the middle, and my projects as curved image panels floating in a ring around him. scrolling rotates the ring
-2. front layer: normal HTML on top: a big title, vertical text, a nav, a torn-paper frame
+realistic and cinematic, not cartoony. dark, rich, a little luxurious.
 
-colors are NOT final. put every color in one file (e.g. `src/theme.ts`) so i can change the palette in one place. start with: near-black background, a coral-red glowing floor, one cool accent (teal).
+palette (all in `src/theme.ts`, one place to change):
+- near-black #0A0506 (background)
+- deep maroon #3B0A12
+- cherry red #9E1B32
+- glowing cherry #D2042D (floor glow, highlights)
+- champagne gold #E8C27A (calligraphy, sparkle, thin frames)
+- soft white #F4EDEE (body text)
+- muted rose grey #B9A7AB (secondary text)
 
-## file structure to aim for
+fonts (all free Google Fonts, set in `src/theme.ts`):
+- calligraphy for big titles and project names ONLY (it's unreadable small). make it switchable between: Imperial Script, MonteCarlo, Hurricane, so i can pick by looking
+- one clean readable sans for everything else (e.g. Inter)
+- calligraphy titles get a gold gradient with a slow sparkle/shimmer (and subtle drei `<Sparkles>` near them in 3D). no shimmer under prefers-reduced-motion
 
-```
-src/
-  App.tsx            canvas + overlay layout only
-  theme.ts           all colors and sizes
-  scene/             everything inside the 3D canvas
-    World.tsx        stars, floor, lights, fog
-    Character.tsx    capsule now, real model in part E
-    ProjectRing.tsx  the ring of panels
-    ProjectPanel.tsx one curved panel
-  overlay/           the HTML layer
-  data/projects.ts   project list (title, image, one-liner, links)
-public/
-  projects/          screenshots, about 800px wide
-  models/            the .glb character
-```
+the world should feel real:
+- the floor is a glossy dark maroon surface with soft reflections (drei MeshReflectorMaterial or similar), a cherry glow at its center under the character, fading to black at the edges. not a flat neon disc
+- panels look like physical objects: thin champagne-gold frame, slight emission so screenshots read in the dark, soft reflection in the floor
+- subtle fog so the ring fades into darkness
+- slow floating dust particles in the air
+
+## the character
+
+a warrior girl, my style. I'm building her in VRoid Studio and exporting `kinjal.vrm`. until that file exists, keep a placeholder (a simple feminine silhouette shape is fine, not the gray capsule) and make swapping in the VRM a one-line change.
+- idle: a confident warrior idle (weight shift, breathing), from Mixamo, retargeted to the VRM
+- she stands at the center of the floor, the ring orbits her
+- tell me exactly which Mixamo animations to download and how (FBX settings) when we reach part E
+
+## interaction
+
+- clicking a panel: it flies to the front, flattens, scales up, the rest of the ring dims. the detail view opens with all info from CONTENT.md (what it is, field notes, stack, team, links as big buttons)
+- close with a close button, Esc, or clicking outside. the panel flies back
+- each project has a URL hash (#leash) so a link can open it directly
+- hover: panel lifts slightly, frame brightens, cursor becomes a pointer
+- keyboard: Tab can reach every project (hidden HTML buttons mirroring the panels), Enter opens
 
 ## roadmap
 
-PART A: setup (done: project created, three/fiber/drei installed, index.css cleaned)
+DONE: part A setup, part B world, part C ring (needs the rework below)
 
-PART B: the world
-- 4. replace the Vite starter page with a full-screen R3F `<Canvas>` and a star field
-- 5. red glowing floor (a flat circle, self-lit material)
-- 6. camera looking down from above at an angle, like the reference
-- 7. gray capsule standing in the middle as a placeholder character
-- keep OrbitControls on for debugging in this part
+PART C2: rework the world + ring
+- new palette and fonts from "look and feel"
+- realistic glossy floor with center glow, fog, dust particles
+- 7 panels in CONTENT.md order (leash in front on load), gold frames, calligraphy name + panel line on placeholder textures until screenshots exist in `public/projects/` (leash.png, sentinelai.png, cra.png, orbital.png, agentseal.png, honmaruai.png, arkor.png)
+- images must never stretch (crop to fit, like object-fit cover)
 
-PART C: projects in a ring
-- 8. `data/projects.ts` with my projects (list below). screenshots go in `public/projects/`. until i add them, use a plain colored placeholder texture per project with its title
-- 9. one panel floating in 3D
-- 10. bend it into a curve (hint: an open-ended slice of a cylinder is already curved)
-- 11. all panels in a circle around the character, facing inward
-- 12. ring rotates slowly by itself
+PART D: scroll + mouse
+- scroll turns the ring, camera drifts with the mouse
 
-PART D: scroll
-- 13. scrolling rotates the ring (try drei `ScrollControls` first)
-- 14. camera drifts slightly with the mouse
-
-PART E: the real character
-- 15. tell me exactly what to download from Quaternius and where to put it
-- 16. swap the capsule for the model and play an idle animation
-- 17. shadow on the floor
+PART E: the girl (ask before installing @pixiv/three-vrm)
+- feminine placeholder now, VRM loader ready, Mixamo idle retargeting
 
 PART F: cinematic look (ask before installing postprocessing)
-- 18. bloom so the floor glows
-- 19. film grain + vignette
-- 20. fog so far panels fade into black
+- bloom on the glow, film grain, vignette, tuned fog
 
-PART G: HTML layer on top of the canvas
-- 21. overlay layer that doesn't block the canvas
-- 22. big title in a free Google font with character
-- 23. vertical text columns (CSS writing-mode)
-- 24. nav: projects / about / contact
-- 25. torn-paper frame around the screen (free asset or SVG/CSS, ask me first)
+PART G: click to open
+- everything in "interaction"
 
-PART H: interaction
-- 26. hover a panel: it grows and glows, cursor becomes a pointer
-- 27. click a panel: project detail opens (one-liner, stack, what broke, link)
-- 28. about + contact sections
+PART H: chapters after the ring
+- as you scroll past the ring: right now, wins, who am i, numbers, writing, education, contact (from CONTENT.md)
+- the 3D scene stays in the background, the camera moves for each chapter (e.g. pulls back, rises), HTML content slides in over it
+- wins items open their project panel
 
 PART I: ship
-- 29. simpler mobile version (3D is heavy on phones), plus reduced-motion support
-- 30. compress images and the model, check performance
-- 31. GitHub Pages deploy setup (ask me before pushing anything)
-- 32. final checklist
-
-## my projects (for the ring and detail views, verified facts only)
-
-- **leash**: hacktoberfest winner (team project). a smart-contract vault that holds money for an ai agent. solidity + hardhat on base sepolia, python/fastapi agent running gpt-oss-120b on groq, next.js dashboard. caps, recipient allowlist and kill switch live in the contract, not the prompt. repo: https://github.com/KinjalGoswami68/leash
-- **SentinelAI**: watches llm outputs and pings slack when quality drifts. fastapi, supabase postgres, tf-idf, isolation forest + cusum, slack webhooks, render. what broke: render deploy is down, tf-idf too generic. repo: TODO
-- **Contract Risk Analyzer**: distilbert fine-tuned on CUAD (free colab t4), about 75% accuracy across 34 clause categories, groq llama 3.3 70b explanations, streamlit. repo: TODO
-- **AgentSeal**: HackIndia '26 finalist (122 teams), team infinity loop. ai decision audit + tamper detection: ethereum-style signing, langchain/groq agent, solidity contract on polygon amoy testnet. repo: TODO
-- **HonmaruAI PR #10**: merged, 27 commits. session-token auth, browser create/decide flow to the websocket relay, cors fix, fixed authorization gaps found in review. https://github.com/Torutesu/HonmaruAI/pull/10
-- **arkor PR**: merged. port-fallback fix in the `arkor dev` cli. link: TODO (verify)
-
-## me (for about/contact)
-
-- Kinjal Goswami, ML engineer, cs student at university of lucknow, AI intern at DataFlirt
-- github: https://github.com/KinjalGoswami68
-- linkedin: https://linkedin.com/in/kinjal-goswami-03738a376
-- x: https://x.com/KGoswami70
-- medium: https://medium.com/@kinjalgoswami682
-- email: kinjalgoswami682@gmail.com
-- no em-dashes in any text on the site
+- `npm run check-links`: a script that requests every URL in CONTENT.md and reports status. streamlit apps may show an "asleep" page, report those separately, not as broken
+- mobile version (lighter scene, fewer particles, panels as a swipe list if needed), reduced-motion support
+- compress images and the model, check performance
+- GitHub Pages deploy setup (ask before pushing)

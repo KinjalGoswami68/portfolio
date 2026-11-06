@@ -1,20 +1,34 @@
-// Every color and size for the site lives here.
-// Change the palette in this one file and the whole scene follows.
+// Every color, font and size for the site lives here.
+// Change something in this one file and the whole site follows.
 
 export const colors = {
-  background: '#050505', // near-black space
-  floor: '#ff5a4e', // coral-red glowing floor
-  accent: '#2ec4b6', // cool teal accent (used more in later parts)
-  character: '#8a8a8a', // gray placeholder capsule
-  panelBack: '#111111', // the outside (back) of each project panel
-  placeholderText: '#f5f5f5', // title text on placeholder panels
-  // background colors for placeholder panels, used in turn
-  placeholders: ['#1f7a72', '#a33a32', '#2b3a55'],
+  background: '#0A0506', // near-black (background, fog)
+  maroon: '#3B0A12', // deep maroon (floor, panel backgrounds)
+  cherry: '#9E1B32', // cherry red
+  cherryGlow: '#D2042D', // glowing cherry (floor glow, highlights)
+  gold: '#E8C27A', // champagne gold (calligraphy, sparkle, thin frames)
+  softWhite: '#F4EDEE', // body text
+  roseGrey: '#B9A7AB', // secondary text
 }
 
-export const sizes = {
-  floorRadius: 6, // how wide the glowing circle is
-  starCount: 3000, // fewer stars = lighter on integrated graphics
+// The three calligraphy fonts you can choose between.
+export const calligraphyFonts = ['Imperial Script', 'MonteCarlo', 'Hurricane'] as const
+
+export const fonts = {
+  // change this to 'MonteCarlo' or 'Hurricane' to compare. big titles and project names only
+  calligraphy: 'Imperial Script' as (typeof calligraphyFonts)[number],
+  sans: 'Inter', // everything else
+}
+
+export const world = {
+  floorRadius: 16, // big, so its edges disappear into the fog
+  glowRadius: 3.5, // size of the cherry glow under the character
+  reflectionResolution: 512, // lower (256) = faster, blurrier reflections
+  reflectionStrength: 15, // how strongly the floor mirrors things. 0 = no reflection
+  fogNear: 10, // fog starts this far from the camera
+  fogFar: 28, // and is fully black this far away
+  starCount: 1500, // fewer stars = lighter on integrated graphics
+  dustCount: 60, // floating dust particles
 }
 
 export const ring = {
@@ -22,5 +36,7 @@ export const ring = {
   panelWidth: 3, // width of one panel (measured along its curve)
   panelHeight: 1.875, // 3 / 1.875 = 1.6, roughly a 16:10 screenshot
   panelY: 1.4, // height of the panel's center above the floor
+  frameThickness: 0.04, // how much gold frame shows around each picture
+  panelEmission: 0.6, // how much the picture glows by itself (0 = only lit by lights)
   spinSpeed: 0.05, // radians per second (a full turn takes about 2 minutes)
 }

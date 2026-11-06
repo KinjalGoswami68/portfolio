@@ -6,7 +6,7 @@ import { ring } from '../theme'
 import ProjectPanel from './ProjectPanel'
 
 // All project panels, spaced evenly in a circle around the character.
-// The whole ring slowly turns by itself.
+// The first project (leash) starts in front, facing the camera.
 export default function ProjectRing() {
   // a ref = a direct handle to the real three.js group
   const ringRef = useRef<Group>(null)
@@ -25,9 +25,9 @@ export default function ProjectRing() {
   return (
     <group ref={ringRef}>
       {projects.map((project, i) => (
-        // each panel gets its own group, turned around the vertical (Y) axis
-        <group key={project.id} rotation={[0, i * step, 0]}>
-          <ProjectPanel project={project} index={i} />
+        // minus sign: the next project waits on the right, so the spin brings them in order
+        <group key={project.id} rotation={[0, -i * step, 0]}>
+          <ProjectPanel project={project} />
         </group>
       ))}
     </group>

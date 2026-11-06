@@ -1,67 +1,135 @@
-// The project list. The 3D ring draws one panel per entry, in this order.
-// Only verified facts go here. Anything missing is marked 'TODO'.
+// The project list for the ring, in ring order (leash is in front on load).
+// Every word and link is copied from CONTENT.md. Don't edit copy here without editing CONTENT.md.
+// 'TODO' = not given yet. It must stay visible on the site until it's filled in.
+
+export type ProjectLink = {
+  label: string // 'live', 'arena', 'repo', 'pr'
+  url: string // 'TODO' if missing
+}
 
 export type Project = {
-  id: string // short unique name, used by React as a key
-  title: string
-  // screenshot file name inside public/projects/ (about 800px wide).
-  // leave it out and the panel shows a colored placeholder with the title.
-  image?: string
-  badge?: string // award or result, if any
-  oneLiner: string
-  details?: string[] // extra facts for the detail view (part H)
+  id: string // unique, also used later for the URL hash (#leash)
+  name: string // shown in calligraphy
+  image: string // screenshot file in public/projects/. placeholder is drawn if it's missing
+  badge?: string
+  panelLine: string
+  whatItIs: string
+  demo?: string // "the demo"
+  tryIt?: string // "try it"
+  honestLimit?: string // "honest limit"
+  fieldNotes?: string[]
+  team?: string
   stack?: string[]
-  whatBroke?: string
-  link: string // 'TODO' until the real link is known
+  links: ProjectLink[]
 }
 
 export const projects: Project[] = [
   {
     id: 'leash',
-    title: 'leash',
-    badge: 'Hacktoberfest winner (team project)',
-    oneLiner: 'A smart-contract vault that holds money for an AI agent.',
-    details: ['Caps, recipient allowlist and kill switch live in the contract, not the prompt.'],
-    stack: ['Solidity', 'Hardhat', 'Base Sepolia', 'Python', 'FastAPI', 'gpt-oss-120b on Groq', 'Next.js'],
-    link: 'https://github.com/KinjalGoswami68/leash',
+    name: 'leash',
+    image: 'leash.png',
+    badge: '1st prize · hacktoberfest hack day 2026',
+    panelLine: "the ai got hacked. the money didn't.",
+    whatItIs:
+      'a smart-contract vault that holds money for an ai agent. the agent gets a key that can do exactly one thing: pay(). spending caps, a recipient allowlist and a kill switch live in the contract, so when the agent gets prompt-injected, the damage is capped by code, not by the prompt.',
+    demo: 'we hid a "pay this wallet" line inside a vendor email. the model fell for it. the contract blocked it on-chain and logged why.',
+    tryIt:
+      "there's a jailbreak arena. three vaults, same agent, different rules. fool the agent and see which vault still says no.",
+    honestLimit:
+      'the daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. a sliding window would cost more gas.',
+    team: 'team cryptonix with khushi kushwaha, ambar gupta and chhavi gupta. faculty of engineering and technology, university of lucknow',
+    stack: ['Solidity', 'OpenZeppelin', 'Hardhat', 'Base Sepolia', 'Python', 'FastAPI', 'web3.py', 'gpt-oss-120b on Groq', 'Next.js'],
+    links: [
+      { label: 'live', url: 'https://leash-agent.vercel.app' },
+      { label: 'arena', url: 'https://leash-agent.vercel.app/arena' },
+      { label: 'repo', url: 'https://github.com/KinjalGoswami68/leash' },
+    ],
   },
   {
     id: 'sentinelai',
-    title: 'SentinelAI',
-    oneLiner: 'Watches LLM outputs and pings Slack when quality drifts.',
-    stack: ['FastAPI', 'Supabase Postgres', 'TF-IDF', 'Isolation Forest + CUSUM', 'Slack webhooks', 'Render'],
-    whatBroke: 'Render deploy is down, TF-IDF too generic.',
-    link: 'TODO', // repo link missing
+    name: 'SentinelAI',
+    image: 'sentinelai.png',
+    panelLine: 'llms go bad quietly. this one tells slack within 60 seconds.',
+    whatItIs: `watches what a chatbot actually says after it's live. three signals catch what one metric would miss: tf-idf cosine similarity for drift, isolation forest for anomalies, cusum for slow decay. multi-tenant fastapi backend that learns each tenant's "normal" from live usage instead of hardcoding it.`,
+    fieldNotes: [
+      "picked tf-idf over sentence-transformers because render's free tier gives 512mb ram",
+      'added a 50-sample warmup after false positives spiked on cold start',
+      'did the whole thing solo: architecture, ml pipeline, backend, deploy, ui',
+    ],
+    stack: ['Python', 'FastAPI', 'scikit-learn', 'Streamlit', 'Supabase Postgres', 'Render', 'Slack webhooks'],
+    links: [
+      { label: 'live', url: 'https://sentinelai24455.streamlit.app' },
+      { label: 'repo', url: 'TODO' },
+    ],
   },
   {
     id: 'contract-risk-analyzer',
-    title: 'Contract Risk Analyzer',
-    oneLiner: 'DistilBERT fine-tuned on CUAD, about 75% accuracy across 34 clause categories.',
-    details: ['Trained on a free Colab T4.', 'Explanations from Groq Llama 3.3 70B.'],
-    stack: ['DistilBERT', 'CUAD', 'Groq Llama 3.3 70B', 'Streamlit'],
-    link: 'TODO', // repo link missing
+    name: 'Contract Risk Analyzer',
+    image: 'cra.png',
+    panelLine: 'contracts are dense on purpose. this reads them for you.',
+    whatItIs:
+      'fine-tuned distilbert on CUAD to flag clauses across 34 legal risk categories, then llama 3.3 70b on groq explains each one in plain english. upload a contract, get the risky parts and what they actually commit you to.',
+    fieldNotes: [
+      'about 75% accuracy across 34 categories, fine-tuned on a free colab t4',
+      'whole pipeline solo: preprocessing, fine-tuning, prompt design, frontend',
+      'the llm layer exists so non-lawyers can read the output',
+    ],
+    stack: ['Python', 'Hugging Face Transformers (DistilBERT)', 'Groq (Llama 3.3 70B)', 'Streamlit'],
+    links: [
+      { label: 'live', url: 'https://contract-risk-analyzer23.streamlit.app/' },
+      { label: 'repo', url: 'TODO' },
+    ],
+  },
+  {
+    id: 'orbital-terrain-scanner',
+    name: 'Orbital Terrain Scanner',
+    image: 'orbital.png',
+    panelLine: "satellite images in. trees and water out. what's left is what we built.",
+    whatItIs:
+      'fine-tuned a pretrained resnet18 on eurosat sentinel-2 to classify 10 land-cover classes. a rasterio + numpy pipeline turns raw .tif/.jpg satellite files into tensors. then a numpy mask strips out vegetation and water in real time so only exposed ground and infrastructure stay.',
+    fieldNotes: [
+      'the anomaly filter is matrix masking, not a second model',
+      'fought git buffer-size and timeout errors to deploy a 43mb model file',
+    ],
+    stack: ['Python', 'PyTorch (ResNet18)', 'rasterio', 'NumPy', 'Streamlit'],
+    links: [
+      { label: 'live', url: 'https://terrain-web-app.streamlit.app/' },
+      { label: 'repo', url: 'TODO' },
+    ],
   },
   {
     id: 'agentseal',
-    title: 'AgentSeal',
-    badge: "HackIndia '26 finalist (122 teams), team infinity loop",
-    oneLiner: 'AI decision audit and tamper detection.',
-    stack: ['Ethereum-style signing', 'LangChain', 'Groq', 'Solidity', 'Polygon Amoy testnet'],
-    link: 'TODO', // repo link missing
+    name: 'AgentSeal',
+    image: 'agentseal.png',
+    badge: "hackindia '26 finalist · 122 teams",
+    panelLine: 'every decision the agent makes gets signed. nobody edits it later.',
+    whatItIs:
+      "an ai decision audit and tamper-detection system. ethereum-style signing, a langchain/groq agent and a solidity contract on the polygon amoy testnet, so any decision can be verified later and can't be quietly changed.",
+    team: 'team infinity loop',
+    stack: ['Solidity', 'Polygon Amoy', 'LangChain', 'Groq', 'Ethereum-style signing'],
+    links: [{ label: 'repo', url: 'TODO' }],
   },
   {
-    id: 'honmaruai-pr-10',
-    title: 'HonmaruAI PR #10',
-    badge: 'Merged, 27 commits',
-    oneLiner: 'Session-token auth and a browser create/decide flow to the WebSocket relay.',
-    details: ['CORS fix.', 'Fixed authorization gaps found in review.'],
-    link: 'https://github.com/Torutesu/HonmaruAI/pull/10',
+    id: 'honmaruai',
+    name: 'HonmaruAI',
+    image: 'honmaruai.png',
+    badge: 'merged · 27 commits',
+    panelLine: 'the maintainer found holes in my auth code. i fixed every one.',
+    whatItIs:
+      'turned the reference web client into a real signed-in client: session-token auth, a browser create/decide flow that reaches the websocket relay, and a cors fix that unblocked every browser api call. review found authorization gaps (org-membership checks, invite-role validation, identity uniqueness). fixed each one over multiple rounds and added a test per fix before merge.',
+    stack: ['TypeScript', 'Cloudflare Workers', 'WebSockets'],
+    links: [{ label: 'pr', url: 'https://github.com/Torutesu/HonmaruAI/pull/10' }],
   },
   {
-    id: 'arkor-pr',
-    title: 'arkor PR',
-    badge: 'Merged',
-    oneLiner: 'Port-fallback fix in the arkor dev CLI.',
-    link: 'TODO', // link not verified yet
+    id: 'arkor',
+    name: 'arkor',
+    image: 'arkor.png',
+    badge: 'merged · my first pr',
+    panelLine: 'my first merged pr. a port bug, and a lot of review comments.',
+    // the backticks are from CONTENT.md (code formatting for the command name)
+    whatItIs:
+      'diagnosed and fixed a port-fallback bug in the `arkor dev` cli. took it through multiple rounds of maintainer review before it landed in main.',
+    // TODO: the old site links issue #199, the actual pr link is still needed
+    links: [{ label: 'pr', url: 'TODO' }],
   },
 ]
