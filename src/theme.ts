@@ -31,6 +31,11 @@ export const world = {
   dustCount: 60, // floating dust particles
 }
 
+export const character = {
+  scale: 1.2, // she's about 1.6 units tall in the file, 1.2x makes her about 2
+  idleAnimation: 'idle.fbx', // Mixamo file in public/animations/
+}
+
 export const ring = {
   radius: 6.5, // distance from the character to the panels
   panelWidth: 3, // width of one panel (measured along its curve)
