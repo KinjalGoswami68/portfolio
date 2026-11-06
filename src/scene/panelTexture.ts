@@ -94,3 +94,29 @@ export function coverCrop(texture: THREE.Texture, panelAspect: number) {
   // center the used part
   texture.offset.set((1 - texture.repeat.x) / 2, (1 - texture.repeat.y) / 2)
 }
+
+// The frame shimmer: a dim strip with one bright stripe in the middle.
+// Used as the gold frame's glow map and slid sideways every frame, so the stripe sweeps across.
+export function makeShimmerTexture() {
+  const width = 256
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = 4
+  const ctx = canvas.getContext('2d')!
+  const gradient = ctx.createLinearGradient(0, 0, width, 0)
+  gradient.addColorStop(0, 'rgb(100, 100, 100)') // dim: the frame's normal glow
+  gradient.addColorStop(0.42, 'rgb(100, 100, 100)')
+  gradient.addColorStop(0.5, 'rgb(255, 255, 255)') // the bright stripe
+  gradient.addColorStop(0.58, 'rgb(100, 100, 100)')
+  gradient.addColorStop(1, 'rgb(100, 100, 100)')
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, width, 4)
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.wrapS = THREE.RepeatWrapping // sliding past the edge wraps around, so the sweep loops
+  return texture
+}
+
+// Moves the shimmer stripe. loops = how many sweeps have happened so far (only the part after the dot matters)
+export function slideShimmer(texture: THREE.Texture, loops: number) {
+  texture.offset.x = -(loops % 1)
+}

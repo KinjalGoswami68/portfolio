@@ -26,7 +26,21 @@ export const world = {
   fogNear: 10, // fog starts this far from the camera
   fogFar: 28, // and is fully black this far away
   starCount: 1500, // fewer stars = lighter on integrated graphics
-  dustCount: 60, // floating dust particles
+  dustCount: 60, // floating dust particles in the air
+  ringDustCount: 70, // gold dust drifting around the ring
+  herSparkleCount: 24, // a few sparkles around her
+  glowBoost: 8, // how much brighter than "normal" the floor glow is, so bloom picks it up
+  sparkleBoost: 3, // same for the sparkles
+}
+
+// Post-processing: effects applied to the finished picture, like a photo filter
+export const effects = {
+  maxPixelRatio: 1.25, // lower than before: the effects add work for every pixel
+  bloomThreshold: 0.9, // only things brighter than this glow (floor glow, sparkles, frame shimmer)
+  bloomIntensity: 1.1, // how strong the glow is
+  bloomRadius: 0.7, // how far the glow spreads
+  grain: 0.035, // film grain strength (0 = off)
+  vignetteDarkness: 0.75, // how dark the corners get
 }
 
 // The two camera spots. position = where the eye is, target = the point it looks at.
@@ -70,8 +84,9 @@ export const ring = {
   spinEase: 4, // how quickly scroll/drag spin catches up (higher = snappier)
   blockerSink: 2.4, // how far panels in front of her sink below the floor
   scrollScreens: 2.5, // how tall the ring part of the page is, in screen heights
-  frameGlow: 0.15, // the gold frame's own glow, normally
-  hoverFrameGlow: 0.9, // ...and when hovered
+  frameGlow: 1.6, // the gold frame's own glow, normally (the shimmer stripe is the part that blooms)
+  hoverFrameGlow: 4, // ...and when hovered (the whole frame blooms)
+  shimmerSpeed: 0.12, // how fast the shimmer stripe sweeps across the frames (loops per second)
   hoverLift: 0.15, // how far a hovered panel rises
   openDistance: 5, // how far in front of the camera an open panel floats
   openSpeed: 5, // how fast it flies to the front and back (higher = faster)

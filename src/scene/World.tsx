@@ -3,6 +3,10 @@ import * as THREE from 'three'
 import { MeshReflectorMaterial, Sparkles, Stars } from '@react-three/drei'
 import { colors, world } from '../theme'
 
+// brighter than "normal" colors, so bloom picks them up (see effects in theme.ts)
+const glowColor = new THREE.Color(colors.cherryGlow).multiplyScalar(world.glowBoost)
+const sparkleColor = new THREE.Color(colors.goldBright).multiplyScalar(world.sparkleBoost)
+
 // The environment: background, fog, stars, glossy floor, center glow, lights, dust.
 export default function World() {
   // the soft round glow picture, painted once
@@ -42,7 +46,7 @@ export default function World() {
         <circleGeometry args={[world.glowRadius, 64]} />
         <meshBasicMaterial
           map={glowTexture}
-          color={colors.cherryGlow}
+          color={glowColor} // brighter than "normal" cherry, so bloom makes it glow
           transparent
           blending={THREE.AdditiveBlending} // adds light on top, like a flashlight
           depthWrite={false}
@@ -68,6 +72,27 @@ export default function World() {
         opacity={0.4}
         noise={1}
         color={colors.gold}
+      />
+      {/* gold dust drifting around the ring: a wide, flat band at panel height */}
+      <Sparkles
+        count={world.ringDustCount}
+        scale={[17, 2.5, 17]}
+        position={[0, 1.4, 0]}
+        size={3}
+        speed={0.25}
+        opacity={0.7}
+        noise={1.5}
+        color={sparkleColor}
+      />
+      {/* a few sparkles close around her */}
+      <Sparkles
+        count={world.herSparkleCount}
+        scale={[1.6, 2.2, 1.6]}
+        position={[0, 1.1, 0]}
+        size={3}
+        speed={0.35}
+        opacity={0.8}
+        color={sparkleColor}
       />
     </>
   )

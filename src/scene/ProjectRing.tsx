@@ -1,12 +1,16 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import { projects } from '../data/projects'
-import { colors, ring } from '../theme'
+import { colors, ring, world } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import { sceneState } from '../sceneState'
 import ProjectPanel from './ProjectPanel'
+import { makeShimmerTexture, slideShimmer } from './panelTexture'
+
+// brighter than "normal" gold, so bloom makes the burst glow
+const burstColor = new THREE.Color(colors.goldBright).multiplyScalar(world.sparkleBoost)
 
 // full circle (2 * PI radians = 360 degrees) split evenly between projects
 const STEP = (Math.PI * 2) / projects.length
@@ -34,6 +38,7 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
   const openRef = useRef(projects.map(() => 0)) // 1 = flown to the front and flat
   const burstStartRef = useRef(-100) // clock time the last burst started
   const lastOpenRef = useRef(-1)
+  const shimmer = useMemo(() => makeShimmerTexture(), []) // one stripe texture shared by all frames
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.1)
@@ -49,6 +54,9 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
     extraAngleRef.current = ease(extraAngleRef.current, extraGoal, ring.spinEase)
     group.rotation.y = autoAngleRef.current + extraAngleRef.current
     group.updateMatrixWorld()
+
+    // slide the shimmer stripe across every frame (it wraps around, so it loops)
+    if (!prefersReducedMotion) slideShimmer(shimmer, state.clock.elapsedTime * ring.shimmerSpeed)
 
     // whole-ring fade (intro <-> ring view), and dimming while a panel is open
     revealRef.current = ease(revealRef.current, shown ? 1 : 0, ring.fadeSpeed)
@@ -148,14 +156,20 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
               document.body.style.cursor = ''
             }}
           >
-            <ProjectPanel project={project} />
+            <ProjectPanel project={project} shimmer={shimmer} />
           </group>
         ))}
       </group>
 
       {/* the burst: a flat box of gold sparkles the size of the open panel */}
       <group ref={burstRef} visible={false}>
-        <Sparkles count={50} scale={[ring.panelWidth * 1.3, ring.panelHeight * 1.4, 0.6]} size={5} speed={0.8} color={colors.goldBright} />
+        <Sparkles
+          count={50}
+          scale={[ring.panelWidth * 1.3, ring.panelHeight * 1.4, 0.6]}
+          size={5}
+          speed={0.8}
+          color={burstColor}
+        />
       </group>
     </>
   )

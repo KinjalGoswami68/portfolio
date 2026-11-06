@@ -8,7 +8,8 @@ import { coverCrop, loadPanelFonts, makePlaceholderTexture } from './panelTextur
 // It's a slice of a big cylinder centered on the character, sitting behind her (the -z side).
 // ProjectRing rotates copies of it into a circle, and animates hover, flattening and flying.
 // userData.role tags each mesh so ProjectRing can find the frame and the picture.
-export default function ProjectPanel({ project }: { project: Project }) {
+// shimmer = the shared glow map with the sweeping stripe (made once in ProjectRing)
+export default function ProjectPanel({ project, shimmer }: { project: Project; shimmer: THREE.Texture }) {
   // build the curved shapes once (useMemo = don't rebuild on every re-render)
   const pictureGeometry = useMemo(
     () => makeCurvedGeometry(ring.radius, ring.panelWidth, ring.panelHeight),
@@ -35,6 +36,7 @@ export default function ProjectPanel({ project }: { project: Project }) {
           metalness={0.6}
           roughness={0.35}
           emissive={colors.gold}
+          emissiveMap={shimmer} // dim everywhere, bright where the stripe is
           emissiveIntensity={ring.frameGlow}
           side={THREE.BackSide}
           transparent // lets ProjectRing fade it in and out

@@ -4,12 +4,13 @@ import World from './scene/World'
 import Character from './scene/Character'
 import ProjectRing from './scene/ProjectRing'
 import CameraRig from './scene/CameraRig'
+import Effects from './scene/Effects'
 import Intro from './overlay/Intro'
 import RingHud from './overlay/RingHud'
 import Footer from './overlay/Footer'
 import ProjectDetail from './overlay/ProjectDetail'
 import { projects } from './data/projects'
-import { cameraViews, colors, fonts, ring } from './theme'
+import { cameraViews, colors, effects, fonts, ring } from './theme'
 import { sceneState } from './sceneState'
 import './overlay/overlay.css'
 
@@ -118,8 +119,8 @@ export default function App() {
       <Canvas
         // the camera starts at the intro close-up. CameraRig moves it from there
         camera={{ position: [...cameraViews.intro.position], fov: 45 }}
-        // dpr caps pixel density at 1.5x so integrated graphics stays smooth
-        dpr={[1, 1.5]}
+        // dpr caps pixel density so integrated graphics stays smooth (the effects cost per pixel)
+        dpr={[1, effects.maxPixelRatio]}
         // track the mouse over the whole page, even over the HTML text, so her eyes can follow it
         eventSource={appRef as React.RefObject<HTMLElement>}
         eventPrefix="client"
@@ -128,6 +129,7 @@ export default function App() {
         <Character />
         <ProjectRing shown={view === 'ring'} openIndex={openIndex} onOpen={openProject} />
         <CameraRig view={view} />
+        <Effects />
       </Canvas>
 
       {/* the scrolling layer: in the ring view, scrolling it spins the ring.
