@@ -2,7 +2,7 @@
 
 every word and link on the site comes from here. rules:
 - use the copy as written. don't polish it, don't add facts
-- capitalization: the first letter of every sentence, label and button is capitalized. names like KINJAL GOSWAMI stay all caps
+- proper casing: acronyms uppercase (LLM, LLMs, AI, ML, CS, API, RAG, PR, CLI), names capitalized, otherwise only the first letter of each sentence is capitalized. "HackIndia" as written, "arkor" stays lowercase, KINJAL GOSWAMI stays all caps
 - no em-dashes anywhere
 - `TODO` means i still have to give it. show a visible TODO in dev, never invent it
 
@@ -17,7 +17,7 @@ facts (small glowing pills):
 - Won 1st Prize at Hacktoberfest Hack Day 2026
 - I build ML models, AI agents
 - Currently: AI Intern at DataFlirt
-- I also wrote fiction story that crossed 33K views
+(the fiction line lives in the Who Am I chapter, not on the intro)
 button: Enter
 
 ---
@@ -25,6 +25,7 @@ button: Enter
 ## footer bar (every view)
 links: GitHub → https://github.com/KinjalGoswami68 · LinkedIn → https://linkedin.com/in/kinjal-goswami-03738a376 · X → https://x.com/KGoswami70 · Medium → https://medium.com/@kinjalgoswami682 · Email → kinjalgoswami682@gmail.com · Resume → /resume/Kinjal_Resume.pdf
 resume missing (shown until the pdf is in public/resume/): TODO: copy the pdf into public/resume/
+copyright (right end of the bar): © 2026 Kinjal Goswami
 
 ---
 
@@ -34,8 +35,8 @@ badge (clickable, opens the leash panel): 1st Prize · Hacktoberfest Hack Day 20
 back link (returns to the intro): Back to intro
 not shown yet:
 - big name: Kinjal
-- small line above: Kinjal goswami
-- line under: Ml engineer. 2nd year cs. Building things that break, then fixing them in public.
+- small line above: Kinjal Goswami
+- line under: ML engineer. 2nd year CS. Building things that break, then fixing them in public.
 - vertical side text (left): MACHINE LEARNING · LLMs · AGENTS
 - vertical side text (right): BUILDING IN PUBLIC SINCE 2025
 - scroll hint: Scroll. The ring turns
@@ -54,12 +55,12 @@ link buttons: Live · Arena · Repo · PR
 
 ### 1. Leash
 badge: 1st Prize · Hacktoberfest Hack Day 2026
-panel line: The ai got hacked. The money didn't.
-what it is: A smart-contract vault that holds money for an ai agent. The agent gets a key that can do exactly one thing: pay(). Spending caps, a recipient allowlist and a kill switch live in the contract, so when the agent gets prompt-injected, the damage is capped by code, not by the prompt.
+panel line: The AI got hacked. The money didn't.
+what it is: A smart-contract vault that holds money for an AI agent. The agent gets a key that can do exactly one thing: pay(). Spending caps, a recipient allowlist and a kill switch live in the contract, so when the agent gets prompt-injected, the damage is capped by code, not by the prompt.
 the demo: We hid a "pay this wallet" line inside a vendor email. The model fell for it. The contract blocked it on-chain and logged why.
 try it: There's a jailbreak arena. Three vaults, same agent, different rules. Fool the agent and see which vault still says no.
 honest limit: The daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. A sliding window would cost more gas.
-team: Team cryptonix with khushi kushwaha, ambar gupta and chhavi gupta. Faculty of engineering and technology, university of lucknow
+team: Team Cryptonix with Khushi Kushwaha, Ambar Gupta and Chhavi Gupta. Faculty of Engineering and Technology, University of Lucknow
 stack: Solidity · OpenZeppelin · Hardhat · Base Sepolia · Python · FastAPI · web3.py · gpt-oss-120b on Groq · Next.js
 links:
 - Live: https://leash-agent.vercel.app
@@ -67,12 +68,12 @@ links:
 - Repo: https://github.com/KinjalGoswami68/leash
 
 ### 2. SentinelAI
-panel line: Llms go bad quietly. This one tells slack within 60 seconds.
-what it is: Watches what a chatbot actually says after it's live. Three signals catch what one metric would miss: tf-idf cosine similarity for drift, isolation forest for anomalies, cusum for slow decay. Multi-tenant fastapi backend that learns each tenant's "normal" from live usage instead of hardcoding it.
+panel line: LLMs go bad quietly. This one tells Slack within 60 seconds.
+what it is: Watches what a chatbot actually says after it's live. Three signals catch what one metric would miss: TF-IDF cosine similarity for drift, isolation forest for anomalies, CUSUM for slow decay. Multi-tenant FastAPI backend that learns each tenant's "normal" from live usage instead of hardcoding it.
 field notes:
-- Picked tf-idf over sentence-transformers because render's free tier gives 512mb ram
+- Picked TF-IDF over sentence-transformers because Render's free tier gives 512MB RAM
 - Added a 50-sample warmup after false positives spiked on cold start
-- Did the whole thing solo: architecture, ml pipeline, backend, deploy, ui
+- Did the whole thing solo: architecture, ML pipeline, backend, deploy, UI
 stack: Python · FastAPI · scikit-learn · Streamlit · Supabase Postgres · Render · Slack webhooks
 links:
 - Live: https://sentinelai24455.streamlit.app
@@ -80,11 +81,11 @@ links:
 
 ### 3. Contract Risk Analyzer
 panel line: Contracts are dense on purpose. This reads them for you.
-what it is: Fine-tuned distilbert on CUAD to flag clauses across 34 legal risk categories, then llama 3.3 70b on groq explains each one in plain english. Upload a contract, get the risky parts and what they actually commit you to.
+what it is: Fine-tuned DistilBERT on CUAD to flag clauses across 34 legal risk categories, then Llama 3.3 70B on Groq explains each one in plain English. Upload a contract, get the risky parts and what they actually commit you to.
 field notes:
-- About 75% accuracy across 34 categories, fine-tuned on a free colab t4
+- About 75% accuracy across 34 categories, fine-tuned on a free Colab T4
 - Whole pipeline solo: preprocessing, fine-tuning, prompt design, frontend
-- The llm layer exists so non-lawyers can read the output
+- The LLM layer exists so non-lawyers can read the output
 stack: Python · Hugging Face Transformers (DistilBERT) · Groq (Llama 3.3 70B) · Streamlit
 links:
 - Live: https://contract-risk-analyzer23.streamlit.app/
@@ -92,10 +93,10 @@ links:
 
 ### 4. Orbital Terrain Scanner
 panel line: Satellite images in. Trees and water out. What's left is what we built.
-what it is: Fine-tuned a pretrained resnet18 on eurosat sentinel-2 to classify 10 land-cover classes. A rasterio + numpy pipeline turns raw .tif/.jpg satellite files into tensors. Then a numpy mask strips out vegetation and water in real time so only exposed ground and infrastructure stay.
+what it is: Fine-tuned a pretrained ResNet18 on EuroSAT Sentinel-2 to classify 10 land-cover classes. A rasterio + NumPy pipeline turns raw .tif/.jpg satellite files into tensors. Then a NumPy mask strips out vegetation and water in real time so only exposed ground and infrastructure stay.
 field notes:
 - The anomaly filter is matrix masking, not a second model
-- Fought git buffer-size and timeout errors to deploy a 43mb model file
+- Fought Git buffer-size and timeout errors to deploy a 43MB model file
 stack: Python · PyTorch (ResNet18) · rasterio · NumPy · Streamlit
 links (no repo link, the repo is empty):
 - Live: https://terrain-web-app.streamlit.app/
@@ -103,23 +104,23 @@ links (no repo link, the repo is empty):
 ### 5. AgentSeal
 badge: HackIndia '26 finalist · 122 teams
 panel line: Every decision the agent makes gets signed. Nobody edits it later.
-what it is: An ai decision audit and tamper-detection system. Ethereum-style signing, a langchain/groq agent and a solidity contract on the polygon amoy testnet, so any decision can be verified later and can't be quietly changed.
-team: Team infinity loop
+what it is: An AI decision audit and tamper-detection system. Ethereum-style signing, a LangChain/Groq agent and a Solidity contract on the Polygon Amoy testnet, so any decision can be verified later and can't be quietly changed.
+team: Team Infinity Loop
 stack: Solidity · Polygon Amoy · LangChain · Groq · Ethereum-style signing
 links: none (no repo button)
 
 ### 6. HonmaruAI
 badge: Merged · 27 commits
 panel line: The maintainer found holes in my auth code. I fixed every one.
-what it is: Turned the reference web client into a real signed-in client: session-token auth, a browser create/decide flow that reaches the websocket relay, and a cors fix that unblocked every browser api call. Review found authorization gaps (org-membership checks, invite-role validation, identity uniqueness). Fixed each one over multiple rounds and added a test per fix before merge.
+what it is: Turned the reference web client into a real signed-in client: session-token auth, a browser create/decide flow that reaches the WebSocket relay, and a CORS fix that unblocked every browser API call. Review found authorization gaps (org-membership checks, invite-role validation, identity uniqueness). Fixed each one over multiple rounds and added a test per fix before merge.
 stack: TypeScript · Cloudflare Workers · WebSockets
 links:
 - PR: https://github.com/Torutesu/HonmaruAI/pull/10
 
 ### 7. arkor
-badge: Merged · my first pr
-panel line: My first merged pr. A port bug, and a lot of review comments.
-what it is: Diagnosed and fixed a port-fallback bug in the `arkor dev` cli. Took it through multiple rounds of maintainer review before it landed in main.
+badge: Merged · my first PR
+panel line: My first merged PR. A port bug, and a lot of review comments.
+what it is: Diagnosed and fixed a port-fallback bug in the `arkor dev` CLI. Took it through multiple rounds of maintainer review before it landed in main.
 links:
 - PR: https://github.com/arkorlab/fine-tuning/pull/212
 
@@ -128,7 +129,7 @@ links:
 ## chapters (below the ring, as you scroll)
 
 ### Right Now
-AI Data Acquisition Intern · DataFlirt (Bengaluru, Remote) · Oct to Dec 2026
+AI Intern · DataFlirt (Bengaluru, Remote) · Oct 2026
 Building the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and keeping LLM token costs measured.
 
 ### Wins
@@ -168,8 +169,3 @@ Build logs and breakdowns, posted while things are still broken.
 ### Contact
 big line: If this looks like the kind of work you want on your team,
 email (big, sparkles on hover): kinjalgoswami682@gmail.com
-
----
-
-## not shown yet
-footer line: © 2026 kinjal goswami

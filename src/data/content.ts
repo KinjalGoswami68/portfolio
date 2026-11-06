@@ -9,7 +9,6 @@ export const intro = {
     'Won 1st Prize at Hacktoberfest Hack Day 2026',
     'I build ML models, AI agents',
     'Currently: AI Intern at DataFlirt',
-    'I also wrote fiction story that crossed 33K views',
   ],
   button: 'Enter',
 }
@@ -52,12 +51,14 @@ export const resume = {
   missing: 'TODO: copy the pdf into public/resume/', // shown while the pdf doesn't exist
 }
 
+export const copyright = '© 2026 Kinjal Goswami' // right end of the footer bar
+
 // ---- chapters below the ring (CONTENT.md "chapters") ----
 
 export const chapters = {
   rightNow: {
     title: 'Right Now',
-    role: 'AI Data Acquisition Intern · DataFlirt (Bengaluru, Remote) · Oct to Dec 2026',
+    role: 'AI Intern · DataFlirt (Bengaluru, Remote) · Oct 2026',
     text: 'Building the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and keeping LLM token costs measured.',
   },
   wins: {

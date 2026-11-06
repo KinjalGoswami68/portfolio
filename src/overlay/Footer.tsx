@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
-import { footerLinks, resume } from '../data/content'
+import { copyright, footerLinks, resume } from '../data/content'
 
 // The slim bar at the bottom of every view: GitHub · LinkedIn · X · Medium · Email · Resume.
 export default function Footer() {
@@ -30,6 +30,7 @@ export default function Footer() {
           </span>
         )}
       </nav>
+      <p className="footer-copyright">{copyright}</p>
     </footer>
   )
 }

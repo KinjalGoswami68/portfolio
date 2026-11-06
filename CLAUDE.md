@@ -23,7 +23,7 @@ I'm Kinjal, a self-taught AI/ML student learning 3D web dev with this project. T
 2. after each part or stage: `npm run lint`, `npm run build`, fix anything broken, commit locally ("part X: ..." / "stage N: ..."). never push or deploy unless i ask
 3. ask before installing any package not listed below, and say why
 4. ALL words and links come from CONTENT.md, word for word. never invent facts, links or numbers. a missing value stays a visible TODO
-5. capitalization: the first letter of every sentence, label and button is capitalized. names like KINJAL GOSWAMI stay all caps
+5. proper casing everywhere: acronyms stay uppercase (LLM, LLMs, AI, ML, CS, API, RAG, PR, CLI), names are capitalized (Cryptonix, Khushi Kushwaha, Ambar Gupta, Chhavi Gupta, Infinity Loop, Leash, SentinelAI, AgentSeal, HonmaruAI), otherwise only the first letter of each sentence, label and button is capitalized. exceptions: "HackIndia" as written, "arkor" stays lowercase (the project's own name), KINJAL GOSWAMI stays all caps on the intro
 6. no em-dashes anywhere on the site
 7. every link must work. external links open in a new tab (rel="noopener noreferrer", hidden "(opens in new tab)" text for screen readers)
 8. inspiration is yuusuke.work. recreate the TECHNIQUES only. never copy its assets, images, text, fonts or branding
