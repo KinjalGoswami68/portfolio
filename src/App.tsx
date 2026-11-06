@@ -6,6 +6,7 @@ import ProjectRing from './scene/ProjectRing'
 import CameraRig from './scene/CameraRig'
 import Intro from './overlay/Intro'
 import RingHud from './overlay/RingHud'
+import Footer from './overlay/Footer'
 import { cameraViews, colors, fonts } from './theme'
 import './overlay/overlay.css'
 
@@ -67,6 +68,7 @@ export default function App() {
       <div className="overlay">
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
         <RingHud shown={view === 'ring'} onBack={() => setView('intro')} />
+        <Footer />
       </div>
     </div>
   )
