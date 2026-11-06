@@ -44,7 +44,7 @@ export default function App() {
   const [view, setView] = useState<View>(() => (projectIndexFromHash() >= 0 ? 'ring' : 'intro'))
   const appRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
-  const dragRef = useRef<number | null>(null) // last pointer x while dragging, null = not dragging
+  const dragRef = useRef<{ x: number; y: number } | null>(null) // last pointer spot while dragging, null = not dragging
   const [inChapters, setInChapters] = useState(false) // scrolled down into the chapters?
 
   // tell the 3D side which view we're in. leaving the ring: reset scroll and hover
@@ -54,6 +54,8 @@ export default function App() {
       sceneState.hoveredIndex = -1
       sceneState.scrollScreens = 0
       sceneState.chapterProgress = 0
+      sceneState.orbitYaw = 0 // next time you enter, the ring view starts from the default angle
+      sceneState.orbitPitch = 0
       scrollerRef.current?.scrollTo({ top: 0 })
     }
   }, [view])
@@ -87,20 +89,39 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
-  // dragging sideways in the ring view spins the ring
+  // the free camera only exists in the ring view, and not while a project is open
+  const canOrbit = view === 'ring' && openIndex < 0
+  // pressing a link or button, or on a chapter card (you might be selecting text), isn't a drag
+  const isOnHtml = (target: EventTarget) => target instanceof Element && target.closest('a, button, .chapter') !== null
+
+  // dragging in the ring view orbits the camera around her (CameraRig does the moving)
   function onPointerDown(event: React.PointerEvent) {
-    // not when pressing a link or button, or on a chapter card (you might be selecting text)
-    const onHtml = event.target instanceof Element && event.target.closest('a, button, .chapter')
-    if (view === 'ring' && event.button === 0 && !onHtml) dragRef.current = event.clientX
+    if (!canOrbit || event.button !== 0 || isOnHtml(event.target)) return
+    dragRef.current = { x: event.clientX, y: event.clientY }
+    // keep getting the moves even if the mouse leaves the window mid-drag
+    event.currentTarget.setPointerCapture(event.pointerId)
   }
   function onPointerMove(event: React.PointerEvent) {
-    if (dragRef.current === null) return
-    // minus: drag right and the panels you're looking at follow your hand to the right
-    sceneState.dragAngle -= (event.clientX - dragRef.current) * ring.dragTurn
-    dragRef.current = event.clientX
+    const last = dragRef.current
+    if (!last || !canOrbit) return
+    const { orbit } = cameraViews
+    // drag right: the camera swings left around her (like turning the scene with your hand)
+    sceneState.orbitYaw -= (event.clientX - last.x) * orbit.yawPerPixel
+    // drag down: the camera rises. clamped so it never dips under the floor or goes top-down
+    const tilted = sceneState.orbitPitch + (event.clientY - last.y) * orbit.pitchPerPixel
+    sceneState.orbitPitch = THREE.MathUtils.clamp(tilted, orbit.minPitch, orbit.maxPitch)
+    sceneState.lastOrbitDragAt = performance.now() // restarts the 3 second glide-back timer
+    dragRef.current = { x: event.clientX, y: event.clientY }
   }
   function onPointerUp() {
     dragRef.current = null
+  }
+  // double-click: straight back to the default angle, no glide
+  function onDoubleClick(event: React.MouseEvent) {
+    if (!canOrbit || isOnHtml(event.target)) return
+    sceneState.orbitYaw = 0
+    sceneState.orbitPitch = 0
+    sceneState.orbitSnap = true
   }
 
   // on the intro, pressing Enter (with nothing focused) or scrolling down also enters
@@ -139,7 +160,7 @@ export default function App() {
         <Effects />
       </Canvas>
 
-      {/* the scrolling layer: in the ring view, scrolling it spins the ring.
+      {/* the scrolling layer: in the ring view, scrolling it spins the ring and dragging it orbits the camera.
           it's see-through, and mouse events still reach the 3D through eventSource */}
       <div
         ref={scrollerRef}
@@ -158,7 +179,8 @@ export default function App() {
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onDoubleClick={onDoubleClick}
       >
         <div className="ring-zone" style={{ height: `${ring.scrollScreens * 100}%` }} />
         {/* the chapters, below the ring zone. only in the ring view */}

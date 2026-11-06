@@ -48,9 +48,9 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
     const ease = (current: number, goal: number, speed: number) =>
       prefersReducedMotion ? goal : THREE.MathUtils.damp(current, goal, speed, dt)
 
-    // spin: always slowly by itself, plus whatever scrolling and dragging add
+    // spin: always slowly by itself, plus whatever scrolling adds (dragging moves the camera instead)
     autoAngleRef.current += ring.spinSpeed * dt
-    const extraGoal = sceneState.scrollScreens * ring.scrollTurn + sceneState.dragAngle
+    const extraGoal = sceneState.scrollScreens * ring.scrollTurn
     extraAngleRef.current = ease(extraAngleRef.current, extraGoal, ring.spinEase)
     group.rotation.y = autoAngleRef.current + extraAngleRef.current
     group.updateMatrixWorld()
@@ -65,14 +65,17 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
 
     // the spot in front of the camera where an open panel goes (in the ring's own coordinates)
     const front = frontPose(state.camera as THREE.PerspectiveCamera, group)
+    // which way the camera is, seen from above (the camera can orbit, so this changes)
+    const cameraDirection = new THREE.Vector2(state.camera.position.x, state.camera.position.z).normalize()
 
     projects.forEach((_project, i) => {
       const panel = panelRefs.current[i]
       if (!panel) return
 
-      // where is this panel around the circle right now?
+      // where is this panel around the circle right now? (its direction from her, seen from above)
+      const angle = group.rotation.y - i * STEP
       // towardCamera: -1 = far side (behind her), +1 = right between the camera and her
-      const towardCamera = -Math.cos(group.rotation.y - i * STEP)
+      const towardCamera = -Math.sin(angle) * cameraDirection.x - Math.cos(angle) * cameraDirection.y
       // smoothstep = a soft 0 to 1 ramp: 0 until -0.1, 1 from 0.55
       const blocking = THREE.MathUtils.smoothstep(towardCamera, -0.1, 0.55)
       presenceRef.current[i] = 1 - blocking

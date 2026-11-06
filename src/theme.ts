@@ -56,8 +56,21 @@ export const cameraViews = {
   // while reading the chapters: pulled back further and risen, the scene stays alive behind
   chapters: { position: [0, 9, 16], target: [0, 2, 0] },
   moveSpeed: 2.2, // how quickly the camera glides between spots (higher = faster)
-  // gentle drift with the mouse (units the camera moves at the screen edge)
-  drift: { intro: [0.08, 0.05], ring: [0.8, 0.4], chapters: [0.8, 0.4] },
+  // intro: gentle drift with the mouse (units the camera moves at the screen edge)
+  introDrift: [0.08, 0.05],
+  // ring view: drag to orbit around her (limited and cinematic)
+  orbit: {
+    yawPerPixel: 0.005, // horizontal turn per pixel dragged (radians). full 360 allowed
+    pitchPerPixel: 0.003, // vertical tilt per pixel dragged
+    minPitch: -0.25, // lowest tilt (radians, about 14 degrees down from the default)
+    maxPitch: 0.45, // highest tilt (about 26 degrees up)
+    minElevation: 8, // safety limits in degrees above the floor: never under it...
+    maxElevation: 60, // ...never straight top-down
+    ease: 4, // smoothness of the orbit (higher = snappier)
+    returnDelay: 3, // seconds without dragging before gliding back to the default angle
+    returnSpeed: 0.6, // how slowly it glides back (lower = slower)
+    mouseDrift: [0.06, 0.03], // tiny extra turn/tilt from the mouse position (radians at the screen edge)
+  },
 } as const
 
 export const character = {
@@ -86,7 +99,6 @@ export const ring = {
   spinSpeed: 0.05, // radians per second (a full turn takes about 2 minutes)
   fadeSpeed: 3, // how quickly the ring fades in/out when you enter or go back
   scrollTurn: 1.2, // extra spin per screen-height of scrolling (radians)
-  dragTurn: 0.006, // extra spin per pixel dragged (radians)
   spinEase: 4, // how quickly scroll/drag spin catches up (higher = snappier)
   blockerSink: 2.4, // how far panels in front of her sink below the floor
   scrollScreens: 2.5, // how tall the ring part of the page is, in screen heights
