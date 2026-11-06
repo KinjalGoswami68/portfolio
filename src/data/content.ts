@@ -89,7 +89,7 @@ export const chapters = {
     items: [
       {
         years: '2025 to 2029',
-        text: 'B.Tech, Computer Science & Engineering · University of Lucknow · cGPA 7.1/10 (first year)',
+        text: 'B.Tech, Computer Science & Engineering · University of Lucknow · CGPA 7.1/10 (first year)',
       },
       { years: '2023 to 2024', text: 'Class XII, CBSE · Dron Public School, Meerut · 90%' },
       { years: '2021 to 2022', text: 'Class X, CBSE · Dron Public School, Meerut · 94.8%' },

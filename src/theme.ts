@@ -26,9 +26,13 @@ export const world = {
   fogNear: 10, // fog starts this far from the camera
   fogFar: 28, // and is fully black this far away
   starCount: 1500, // fewer stars = lighter on integrated graphics
-  dustCount: 60, // floating dust particles in the air
-  ringDustCount: 70, // gold dust drifting around the ring
-  herSparkleCount: 24, // a few sparkles around her
+  // sparkles: how many, and how big each dot is (the burst when a panel opens is set in ProjectRing)
+  dustCount: 30, // floating dust particles in the air
+  dustSize: 1,
+  ringDustCount: 35, // gold dust drifting around the ring
+  ringDustSize: 1.5,
+  herSparkleCount: 12, // a few sparkles around her
+  herSparkleSize: 1.5,
   glowBoost: 8, // how much brighter than "normal" the floor glow is, so bloom picks it up
   sparkleBoost: 3, // same for the sparkles
 }

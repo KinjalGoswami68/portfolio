@@ -143,7 +143,7 @@ Building the systems that collect, store and serve data: self-healing Python scr
 - HonmaruAI · merged PR · 27 commits · auth and real-time sync → https://github.com/Torutesu/HonmaruAI/pull/10
 
 ### Education (vertical timeline)
-- 2025 to 2029 · B.Tech, Computer Science & Engineering · University of Lucknow · cGPA 7.1/10 (first year)
+- 2025 to 2029 · B.Tech, Computer Science & Engineering · University of Lucknow · CGPA 7.1/10 (first year)
 - 2023 to 2024 · Class XII, CBSE · Dron Public School, Meerut · 90%
 - 2021 to 2022 · Class X, CBSE · Dron Public School, Meerut · 94.8%
 

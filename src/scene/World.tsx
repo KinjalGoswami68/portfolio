@@ -67,7 +67,7 @@ export default function World() {
         count={world.dustCount}
         scale={[14, 5, 14]} // the box the dust floats in (width, height, depth)
         position={[0, 2.5, 0]}
-        size={2}
+        size={world.dustSize}
         speed={0.2}
         opacity={0.4}
         noise={1}
@@ -78,7 +78,7 @@ export default function World() {
         count={world.ringDustCount}
         scale={[17, 2.5, 17]}
         position={[0, 1.4, 0]}
-        size={3}
+        size={world.ringDustSize}
         speed={0.25}
         opacity={0.7}
         noise={1.5}
@@ -89,7 +89,7 @@ export default function World() {
         count={world.herSparkleCount}
         scale={[1.6, 2.2, 1.6]}
         position={[0, 1.1, 0]}
-        size={3}
+        size={world.herSparkleSize}
         speed={0.35}
         opacity={0.8}
         color={sparkleColor}
