@@ -8,6 +8,8 @@ import { coverCrop, loadPanelFonts, makePlaceholderTexture } from './panelTextur
 // It's a slice of a big cylinder centered on the character, sitting behind her (the -z side).
 // ProjectRing rotates copies of it into a circle, and animates hover, flattening and flying.
 // userData.role tags each mesh so ProjectRing can find the frame and the picture.
+// morphTargetInfluences={[0]}: the "how flat" slider (0 = curved) must exist from the very first draw,
+// because the floor reflection can draw a new mesh before ProjectRing's frame loop touches it.
 // shimmer = the shared glow map with the sweeping stripe (made once in ProjectRing)
 export default function ProjectPanel({ project, shimmer }: { project: Project; shimmer: THREE.Texture }) {
   // build the curved shapes once (useMemo = don't rebuild on every re-render)
@@ -30,7 +32,7 @@ export default function ProjectPanel({ project, shimmer }: { project: Project; s
   return (
     <group position={[0, ring.panelY, 0]}>
       {/* gold frame: only its inside is drawn (BackSide), so only the thin border shows */}
-      <mesh geometry={frameGeometry} userData={{ role: 'frame' }}>
+      <mesh geometry={frameGeometry} userData={{ role: 'frame' }} morphTargetInfluences={[0]}>
         <meshStandardMaterial
           color={colors.gold}
           metalness={0.6}
@@ -43,14 +45,14 @@ export default function ProjectPanel({ project, shimmer }: { project: Project; s
         />
       </mesh>
       {/* the panel's back: the outside of the same shape, dark (FrontSide = outside only) */}
-      <mesh geometry={frameGeometry} userData={{ role: 'back' }}>
+      <mesh geometry={frameGeometry} userData={{ role: 'back' }} morphTargetInfluences={[0]}>
         <meshStandardMaterial color={colors.background} roughness={0.9} side={THREE.FrontSide} transparent />
       </mesh>
 
       {/* the picture, on the inside of the curve (BackSide), once its texture is ready */}
       {/* renderOrder 1 = drawn after the frame, so the see-through fade layers correctly */}
       {texture && (
-        <mesh geometry={pictureGeometry} renderOrder={1} userData={{ role: 'picture' }}>
+        <mesh geometry={pictureGeometry} renderOrder={1} userData={{ role: 'picture' }} morphTargetInfluences={[0]}>
           <meshStandardMaterial
             map={texture}
             emissiveMap={texture} // glow with the picture's own colors...

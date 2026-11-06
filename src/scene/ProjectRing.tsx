@@ -1,16 +1,19 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
-import { Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import { projects } from '../data/projects'
 import { colors, ring, world } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import { sceneState } from '../sceneState'
 import ProjectPanel from './ProjectPanel'
+import { fadeBurst, makeBurstGeometry, makeDotTexture } from './burst'
 import { makeShimmerTexture, slideShimmer } from './panelTexture'
 
 // brighter than "normal" gold, so bloom makes the burst glow
 const burstColor = new THREE.Color(colors.goldBright).multiplyScalar(world.sparkleBoost)
+// the burst's dots and their round sparkle look, made once
+const burstGeometry = makeBurstGeometry()
+const dotTexture = makeDotTexture()
 
 // full circle (2 * PI radians = 360 degrees) split evenly between projects
 const STEP = (Math.PI * 2) / projects.length
@@ -28,6 +31,7 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
   const ringRef = useRef<THREE.Group>(null)
   const panelRefs = useRef<(THREE.Group | null)[]>([]) // one handle per panel
   const burstRef = useRef<THREE.Group>(null) // the gold sparkle burst around an opened panel
+  const burstMaterialRef = useRef<THREE.PointsMaterial>(null) // its material, to fade it out
   const revealRef = useRef(0) // whole-ring fade: starts invisible (the site opens on the intro)
   const autoAngleRef = useRef(0) // the slow spin it always does by itself
   const extraAngleRef = useRef(0) // the extra spin from scrolling and dragging
@@ -114,7 +118,7 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
     const hovered = panelRefs.current[sceneState.hoveredIndex]
     if (hovered) hovered.localToWorld(sceneState.hoveredPosition.set(0, ring.panelY, -ring.radius))
 
-    // gold sparkle burst: starts when a panel opens, grows outward and disappears
+    // gold sparkle burst: starts when a panel opens, grows outward a little and fades out
     if (openIndex !== lastOpenRef.current) {
       if (openIndex >= 0) burstStartRef.current = state.clock.elapsedTime
       lastOpenRef.current = openIndex
@@ -125,7 +129,8 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
       burst.visible = openIndex >= 0 && progress < 1 && !prefersReducedMotion
       burst.position.copy(group.localToWorld(front.center.clone()))
       burst.quaternion.copy(state.camera.quaternion)
-      burst.scale.setScalar(0.6 + progress * 0.8)
+      burst.scale.setScalar(0.7 + progress * 0.5)
+      if (burstMaterialRef.current) fadeBurst(burstMaterialRef.current, Math.min(progress, 1))
     }
   })
 
@@ -165,15 +170,21 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
         ))}
       </group>
 
-      {/* the burst: a flat box of gold sparkles the size of the open panel */}
+      {/* the burst: glowing dots spread over a flat box the size of the open panel */}
       <group ref={burstRef} visible={false}>
-        <Sparkles
-          count={50}
-          scale={[ring.panelWidth * 1.3, ring.panelHeight * 1.4, 0.6]}
-          size={5}
-          speed={0.8}
-          color={burstColor}
-        />
+        <points geometry={burstGeometry}>
+          <pointsMaterial
+            ref={burstMaterialRef}
+            map={dotTexture} // round, soft dots instead of squares
+            color={burstColor} // extra bright, so bloom makes them glow
+            size={ring.burstSize}
+            sizeAttenuation // farther dots look smaller, like real objects
+            transparent // so it can fade out
+            depthWrite={false}
+            blending={THREE.AdditiveBlending} // adds light, like the floor glow
+            toneMapped={false}
+          />
+        </points>
       </group>
     </>
   )

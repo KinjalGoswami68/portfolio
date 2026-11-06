@@ -26,7 +26,7 @@ export const world = {
   fogNear: 10, // fog starts this far from the camera
   fogFar: 28, // and is fully black this far away
   starCount: 1500, // fewer stars = lighter on integrated graphics
-  // sparkles: how many, and how big each dot is (the burst when a panel opens is set in ProjectRing)
+  // sparkles: how many, and how big each dot is (the burst when a panel opens is under "ring")
   dustCount: 30, // floating dust particles in the air
   dustSize: 1,
   ringDustCount: 35, // gold dust drifting around the ring
@@ -109,5 +109,8 @@ export const ring = {
   openDistance: 5, // how far in front of the camera an open panel floats
   openSpeed: 5, // how fast it flies to the front and back (higher = faster)
   dimmedOpacity: 0.2, // the other panels while one is open
-  burstSeconds: 1.8, // how long the gold sparkle burst lasts
+  // the gold sparkle burst when a panel opens
+  burstSeconds: 1.5, // how long it lasts: it fades out over this time
+  burstCount: 25, // how many sparkles (was 50)
+  burstSize: 0.045, // how big each sparkle is, in 3D units (about half the old size)
 }

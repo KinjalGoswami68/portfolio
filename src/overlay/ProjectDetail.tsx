@@ -11,11 +11,17 @@ type Props = {
 // Esc closes it, and the browser puts focus back where it was when it closes.
 export default function ProjectDetail({ project, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const cardRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
-    if (project && !dialog.open) dialog.showModal()
+    if (project && !dialog.open) {
+      dialog.showModal()
+      // focus the card itself (not the X), so arrow keys, Page Down and Space scroll it.
+      // with focus on the X, Space would close the card instead
+      cardRef.current?.focus()
+    }
     if (!project && dialog.open) dialog.close()
   }, [project])
 
@@ -35,12 +41,13 @@ export default function ProjectDetail({ project, onClose }: Props) {
       }}
     >
       {project && (
-        <article className="detail-card">
+        // tabIndex -1: can receive focus from code (for keyboard scrolling), but isn't a Tab stop
+        <article ref={cardRef} className="detail-card" tabIndex={-1}>
           <button type="button" className="detail-close" onClick={onClose} aria-label={detailLabels.close}>
             ×
           </button>
 
-          <h2 id="project-detail-name" className="detail-name title-shimmer">
+          <h2 id="project-detail-name" className="detail-name title-shimmer title-luminous">
             {project.name}
           </h2>
           {project.badge && <p className="detail-badge">{project.badge}</p>}

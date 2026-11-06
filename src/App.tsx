@@ -164,7 +164,8 @@ export default function App() {
           it's see-through, and mouse events still reach the 3D through eventSource */}
       <div
         ref={scrollerRef}
-        className={`scroller ${view === 'ring' ? 'can-scroll' : ''}`}
+        // scrolls only in the ring view, and is locked while a project card is open (the card scrolls instead)
+        className={`scroller ${view === 'ring' && openIndex < 0 ? 'can-scroll' : ''}`}
         onScroll={(event) => {
           const element = event.currentTarget
           const screen = element.clientHeight

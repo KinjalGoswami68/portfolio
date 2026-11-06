@@ -22,7 +22,7 @@ export default function Intro({ shown, onEnter }: Props) {
     <section className={`intro ${shown ? '' : 'is-hidden'}`} inert={!shown} aria-label="Intro">
       <div className="intro-text">
         <p className="intro-small">{intro.smallLine}</p>
-        <h1 className="title-shimmer intro-name">{intro.name}</h1>
+        <h1 className="title-shimmer title-luminous intro-name">{intro.name}</h1>
         {intro.lines.map((line) => (
           <p key={line} className="intro-line">
             {line}
