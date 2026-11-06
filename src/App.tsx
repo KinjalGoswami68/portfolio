@@ -7,7 +7,8 @@ import CameraRig from './scene/CameraRig'
 import Intro from './overlay/Intro'
 import RingHud from './overlay/RingHud'
 import Footer from './overlay/Footer'
-import { cameraViews, colors, fonts } from './theme'
+import { cameraViews, colors, fonts, ring } from './theme'
+import { sceneState } from './sceneState'
 import './overlay/overlay.css'
 
 // which screen we're on: the close-up intro, or the full ring
@@ -29,6 +30,32 @@ const themeVariables = {
 export default function App() {
   const [view, setView] = useState<View>('intro')
   const appRef = useRef<HTMLDivElement>(null)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<number | null>(null) // last pointer x while dragging, null = not dragging
+
+  // tell the 3D side which view we're in. leaving the ring: reset scroll and hover
+  useEffect(() => {
+    sceneState.ringActive = view === 'ring'
+    if (view === 'intro') {
+      sceneState.hoveredIndex = -1
+      sceneState.scrollScreens = 0
+      scrollerRef.current?.scrollTo({ top: 0 })
+    }
+  }, [view])
+
+  // dragging sideways in the ring view spins the ring
+  function onPointerDown(event: React.PointerEvent) {
+    if (view === 'ring' && event.button === 0) dragRef.current = event.clientX
+  }
+  function onPointerMove(event: React.PointerEvent) {
+    if (dragRef.current === null) return
+    // minus: drag right and the panels you're looking at follow your hand to the right
+    sceneState.dragAngle -= (event.clientX - dragRef.current) * ring.dragTurn
+    dragRef.current = event.clientX
+  }
+  function onPointerUp() {
+    dragRef.current = null
+  }
 
   // on the intro, pressing Enter (with nothing focused) or scrolling down also enters
   useEffect(() => {
@@ -64,6 +91,23 @@ export default function App() {
         <ProjectRing shown={view === 'ring'} />
         <CameraRig view={view} />
       </Canvas>
+
+      {/* the scrolling layer: in the ring view, scrolling it spins the ring.
+          it's see-through, and mouse events still reach the 3D through eventSource */}
+      <div
+        ref={scrollerRef}
+        className={`scroller ${view === 'ring' ? 'can-scroll' : ''}`}
+        onScroll={(event) => {
+          const element = event.currentTarget
+          sceneState.scrollScreens = element.scrollTop / element.clientHeight
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
+      >
+        <div className="ring-zone" style={{ height: `${ring.scrollScreens * 100}%` }} />
+      </div>
 
       <div className="overlay">
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />

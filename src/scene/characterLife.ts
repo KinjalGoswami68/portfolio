@@ -49,6 +49,61 @@ export function turnHead(vrm: VRM, yaw: number, pitch: number) {
   head.rotateX(-pitch) // rotating forward around x tips the face down, so minus = up
 }
 
+// ---- small natural actions every 8 to 12 seconds ----
+
+export type GestureKind = 'lookAround' | 'wave' | 'weightShift'
+
+export type GestureState = {
+  kind: GestureKind | null // what she's doing now, or null
+  startedAt: number
+  nextAt: number // clock time of the next action
+}
+
+const GESTURE_KINDS: GestureKind[] = ['lookAround', 'wave', 'weightShift']
+const GESTURE_SECONDS: Record<GestureKind, number> = { lookAround: 3, wave: 1.8, weightShift: 2.5 }
+
+function randomGestureGap() {
+  return character.gestureGapMin + Math.random() * (character.gestureGapMax - character.gestureGapMin)
+}
+
+export function newGestureState(): GestureState {
+  return { kind: null, startedAt: 0, nextAt: randomGestureGap() }
+}
+
+// Starts and ends actions on schedule. Returns how far along the current one is (0 to 1), or -1.
+export function updateGesture(gesture: GestureState, time: number) {
+  if (!gesture.kind && time >= gesture.nextAt) {
+    gesture.kind = GESTURE_KINDS[Math.floor(Math.random() * GESTURE_KINDS.length)]
+    gesture.startedAt = time
+  }
+  if (!gesture.kind) return -1
+  const progress = (time - gesture.startedAt) / GESTURE_SECONDS[gesture.kind]
+  if (progress >= 1) {
+    gesture.kind = null
+    gesture.nextAt = time + randomGestureGap()
+    return -1
+  }
+  return progress
+}
+
+// The two actions made in code, added on top of the idle pose. (The wave uses wave.fbx instead.)
+export function applyGesturePose(vrm: VRM, kind: GestureKind, progress: number) {
+  const ease = Math.sin(progress * Math.PI) // 0 -> 1 -> 0: starts and ends softly
+  if (kind === 'lookAround') {
+    // head looks to one side, then the other
+    vrm.humanoid.getNormalizedBoneNode('head')?.rotateY(Math.sin(progress * Math.PI * 2) * 0.45 * ease)
+  }
+  if (kind === 'weightShift') {
+    // hips slide a little to one side and tilt, upper body leans back to balance
+    const hips = vrm.humanoid.getNormalizedBoneNode('hips')
+    if (hips) {
+      hips.position.x += 0.03 * ease
+      hips.rotateZ(0.05 * ease)
+    }
+    vrm.humanoid.getNormalizedBoneNode('spine')?.rotateZ(-0.06 * ease)
+  }
+}
+
 // ---- eyes ----
 
 // Points her eyes at a target object with vrm.lookAt (vrm.update does the actual turning).

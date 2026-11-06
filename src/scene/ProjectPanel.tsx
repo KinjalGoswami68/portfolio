@@ -27,7 +27,7 @@ export default function ProjectPanel({ project }: { project: Project }) {
 
   return (
     <group position={[0, ring.panelY, 0]}>
-      {/* gold frame. DoubleSide = its outside is also the panel's back */}
+      {/* gold frame: only its inside is drawn (BackSide), so only the thin border shows */}
       <mesh geometry={frameGeometry}>
         <meshStandardMaterial
           color={colors.gold}
@@ -35,9 +35,13 @@ export default function ProjectPanel({ project }: { project: Project }) {
           roughness={0.35}
           emissive={colors.gold}
           emissiveIntensity={0.15}
-          side={THREE.DoubleSide}
+          side={THREE.BackSide}
           transparent // lets ProjectRing fade it in and out
         />
+      </mesh>
+      {/* the panel's back: the outside of the same shape, dark (FrontSide = outside only) */}
+      <mesh geometry={frameGeometry}>
+        <meshStandardMaterial color={colors.background} roughness={0.9} side={THREE.FrontSide} transparent />
       </mesh>
 
       {/* the picture, on the inside of the curve (BackSide), once its texture is ready */}

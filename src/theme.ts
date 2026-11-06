@@ -36,6 +36,8 @@ export const cameraViews = {
   // high and back: the whole ring
   ring: { position: [0, 6, 10], target: [0, 1, 0] },
   moveSpeed: 2.2, // how quickly the camera glides between spots (higher = faster)
+  // gentle drift with the mouse (units the camera moves at the screen edge)
+  drift: { intro: [0.08, 0.05], ring: [0.8, 0.4] },
 } as const
 
 export const character = {
@@ -49,6 +51,9 @@ export const character = {
   blinkGapMin: 2, // seconds between blinks: random, between min and max
   blinkGapMax: 6,
   blinkSeconds: 0.15, // one blink, closed and open again
+  gestureGapMin: 8, // seconds between small natural actions: random, between min and max
+  gestureGapMax: 12,
+  hoverHeadTurn: 0.8, // how far she can turn her head toward a hovered panel (radians, about 45 degrees)
 }
 
 export const ring = {
@@ -60,4 +65,9 @@ export const ring = {
   panelEmission: 0.6, // how much the picture glows by itself (0 = only lit by lights)
   spinSpeed: 0.05, // radians per second (a full turn takes about 2 minutes)
   fadeSpeed: 3, // how quickly the ring fades in/out when you enter or go back
+  scrollTurn: 1.2, // extra spin per screen-height of scrolling (radians)
+  dragTurn: 0.006, // extra spin per pixel dragged (radians)
+  spinEase: 4, // how quickly scroll/drag spin catches up (higher = snappier)
+  blockerSink: 2.4, // how far panels in front of her sink below the floor
+  scrollScreens: 2.5, // how tall the ring part of the page is, in screen heights
 }

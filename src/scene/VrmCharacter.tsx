@@ -6,7 +6,18 @@ import { VRMLoaderPlugin, VRMUtils, type VRM } from '@pixiv/three-vrm'
 import { character } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import { loadMixamoAnimation } from './mixamo'
-import { aimEyes, armsDown, breathe, newBlinkState, turnHead, updateBlink } from './characterLife'
+import { sceneState } from '../sceneState'
+import {
+  aimEyes,
+  applyGesturePose,
+  armsDown,
+  breathe,
+  newBlinkState,
+  newGestureState,
+  turnHead,
+  updateBlink,
+  updateGesture,
+} from './characterLife'
 
 // what she is doing right now (a tiny "state machine")
 type Phase = 'loading' | 'walk' | 'wave' | 'idle' | 'breathing'
@@ -37,6 +48,7 @@ export default function VrmCharacter({ file }: { file: string }) {
   const phaseRef = useRef<Phase>('loading')
   const phaseTimeRef = useRef(0) // seconds since the current phase started
   const blinkRef = useRef(newBlinkState())
+  const gestureRef = useRef(newGestureState()) // the small actions she does while idling
   const headRef = useRef({ yaw: 0, pitch: 0 }) // the head's current mouse-follow turn
   const lookTarget = useMemo(() => new THREE.Object3D(), []) // invisible point her eyes look at
 
@@ -128,7 +140,31 @@ export default function VrmCharacter({ file }: { file: string }) {
         animations.wave.crossFadeTo(animations.idle, character.blendSeconds, false)
         setPhase('idle')
       }
+
+      // idle: every 8 to 12 seconds a small natural action (not with reduced motion)
+      let gestureProgress = -1
+      if (phaseRef.current === 'idle' && !prefersReducedMotion) {
+        const gesture = gestureRef.current
+        const before = gesture.kind
+        gestureProgress = updateGesture(gesture, state.clock.elapsedTime)
+        // the wave action uses wave.fbx: blend into it, and back to idle when it's over
+        if (before !== 'wave' && gesture.kind === 'wave') {
+          animations.wave.reset().play()
+          animations.idle.crossFadeTo(animations.wave, 0.4, false)
+        }
+        if (before === 'wave' && gesture.kind !== 'wave') {
+          animations.idle.reset().play()
+          animations.wave.crossFadeTo(animations.idle, 0.4, false)
+        }
+      }
+      // never frozen: if the idle somehow stopped (and she isn't mid-wave), start it again
+      if (phaseRef.current === 'idle' && gestureRef.current.kind !== 'wave' && !animations.idle.isRunning()) {
+        animations.idle.reset().play()
+      }
+
       animations.mixer.update(dt) // pose the bones for this moment
+      const kind = gestureRef.current.kind
+      if (kind && gestureProgress >= 0) applyGesturePose(vrm, kind, gestureProgress)
     } else {
       breathe(vrm, state.clock.elapsedTime)
     }
@@ -137,20 +173,37 @@ export default function VrmCharacter({ file }: { file: string }) {
     const walking = phaseRef.current === 'walk' || (phaseRef.current === 'loading' && walksIn)
     body.rotation.y = THREE.MathUtils.damp(body.rotation.y, walking ? FACING_RIGHT : 0, character.turnSpeed, dt)
 
-    // head and eyes follow the mouse softly (paused while walking in)
+    // where should her head point? a hovered panel wins, otherwise the mouse (paused while walking in)
     const head = headRef.current
     const looking = !walking && phaseRef.current !== 'loading'
+    const hovering = looking && sceneState.hoveredIndex >= 0
+    let goalYaw = looking ? state.pointer.x * character.headTurn : 0
+    let goalPitch = looking ? state.pointer.y * character.headTilt : 0
+    if (hovering) {
+      // angle from her face (+z) to the panel, turned as far as a neck can (panels behind her = a glance to that side)
+      const headNode = vrm.humanoid.getNormalizedBoneNode('head')
+      const from = headNode ? headNode.getWorldPosition(new THREE.Vector3()) : body.position
+      const toPanel = sceneState.hoveredPosition.clone().sub(from)
+      const angle = Math.atan2(toPanel.x, toPanel.z) - body.rotation.y
+      goalYaw = THREE.MathUtils.clamp(angle, -character.hoverHeadTurn, character.hoverHeadTurn)
+      goalPitch = 0
+    }
     // damp = move a fraction of the way each frame, so it eases instead of snapping
-    head.yaw = THREE.MathUtils.damp(head.yaw, looking ? state.pointer.x * character.headTurn : 0, 3, dt)
-    head.pitch = THREE.MathUtils.damp(head.pitch, looking ? state.pointer.y * character.headTilt : 0, 3, dt)
+    head.yaw = THREE.MathUtils.damp(head.yaw, goalYaw, 3, dt)
+    head.pitch = THREE.MathUtils.damp(head.pitch, goalPitch, 3, dt)
     turnHead(vrm, head.yaw, head.pitch)
 
     if (looking) {
-      // eyes: an invisible point at the camera, nudged a little toward the mouse
-      const camera = state.camera
-      const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0)
-      const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1)
-      const goal = camera.position.clone().addScaledVector(right, state.pointer.x * 0.6).addScaledVector(up, state.pointer.y * 0.4)
+      // eyes: the hovered panel, or an invisible point at the camera nudged toward the mouse
+      let goal: THREE.Vector3
+      if (hovering) {
+        goal = sceneState.hoveredPosition.clone()
+      } else {
+        const camera = state.camera
+        const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0)
+        const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1)
+        goal = camera.position.clone().addScaledVector(right, state.pointer.x * 0.6).addScaledVector(up, state.pointer.y * 0.4)
+      }
       lookTarget.position.lerp(goal, 1 - Math.exp(-4 * dt))
       aimEyes(vrm, lookTarget)
     } else {
