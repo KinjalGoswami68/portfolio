@@ -101,7 +101,7 @@ a warrior girl, my style, from `kinjal.vrm`. keep the placeholder (simple femini
 ## interaction
 
 - hover: panel lifts slightly, frame glows brighter, cursor becomes a pointer, she turns her head toward it
-- clicking a panel: it flies to the front, flattens, scales up, the rest of the ring dims, gold sparkles burst around it. a detail card opens with everything from CONTENT.md for that project: name, badge, what it is, the demo / try it / honest limit (if any), field notes, stack as pills, team, and big link buttons (Repo, Live, Arena, PR), all opening in a new tab
+- clicking a panel: it flies to the front, flattens, scales up, the rest of the ring dims, gold sparkles burst around it. a detail card opens with everything from CONTENT.md for that project: name, badge, what it is, the demo / try it / honest limit (if any), field notes, stack as pills, and big link buttons (Repo, Live, Arena, PR), all opening in a new tab
 - close with an X button, Esc, or clicking outside. the panel flies back
 - each project has a URL hash (#leash) so a link can open it directly
 - no banner at the top of the ring view. the prize lives on the leash card and in the Wins chapter

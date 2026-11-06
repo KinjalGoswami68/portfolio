@@ -36,7 +36,6 @@ export const projects: Project[] = [
       "There's a jailbreak arena. Three vaults, same agent, different rules. Fool the agent and see which vault still says no.",
     honestLimit:
       'The daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. A sliding window would cost more gas.',
-    team: 'Team project · My part: TODO (what i built)',
     stack: ['Solidity', 'OpenZeppelin', 'Hardhat', 'Base Sepolia', 'Python', 'FastAPI', 'web3.py', 'gpt-oss-120b on Groq', 'Next.js'],
     links: [
       { label: 'Live', url: 'https://leash-agent.vercel.app' },
@@ -102,7 +101,6 @@ export const projects: Project[] = [
     panelLine: 'Every decision the agent makes gets signed. Nobody edits it later.',
     whatItIs:
       "An AI decision audit and tamper-detection system. Ethereum-style signing, a LangChain/Groq agent and a Solidity contract on the Polygon Amoy testnet, so any decision can be verified later and can't be quietly changed.",
-    team: 'Team project · My part: TODO (what i built)',
     stack: ['Solidity', 'Polygon Amoy', 'LangChain', 'Groq', 'Ethereum-style signing'],
     links: [], // no repo button
   },
