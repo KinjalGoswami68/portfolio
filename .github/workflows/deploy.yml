@@ -1,0 +1,61 @@
+# Builds the site and publishes it to GitHub Pages on every push to main.
+# Official flow: build -> upload the dist/ folder as a Pages artifact -> deploy it.
+# One-time setup on GitHub: repo Settings > Pages > Build and deployment > Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # also lets you run it by hand from the Actions tab
+
+# what this workflow is allowed to do
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# only one deploy at a time. a newer push waits; a running deploy is never cut off halfway
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install packages (exactly as in package-lock.json)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build (fails if any visible TODO is left)
+        run: npm run build
+
+      - name: Prepare Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the built site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

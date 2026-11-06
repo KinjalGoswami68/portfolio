@@ -47,7 +47,7 @@ export const footerLinks: SocialLink[] = [
 export const resume = {
   label: 'Resume',
   url: `${import.meta.env.BASE_URL}resume/Kinjal_Resume.pdf`,
-  missing: 'TODO: copy the pdf into public/resume/', // shown while the pdf doesn't exist
+  missing: "TODO: copy the pdf into public/resume/", // build-check: resume (shown only while the pdf is missing)
 }
 
 export const copyright = '© 2026 Kinjal Goswami' // right end of the footer bar
