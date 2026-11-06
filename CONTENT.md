@@ -2,153 +2,174 @@
 
 every word and link on the site comes from here. rules:
 - use the copy as written. don't polish it, don't add facts
-- lowercase is on purpose. no em-dashes anywhere
+- capitalization: the first letter of every sentence, label and button is capitalized. names like KINJAL GOSWAMI stay all caps
+- no em-dashes anywhere
 - `TODO` means i still have to give it. show a visible TODO in dev, never invent it
 
 ---
 
 ## intro (the first screen)
-small line: hi, i'm
+small line: Hi, I'm
 name: KINJAL GOSWAMI
-line: ml engineer. 2nd year cs at university of lucknow. ai data acquisition intern at dataflirt.
-facts:
-- won 1st prize at hacktoberfest hack day 2026 with leash
-- i build ml systems end to end, then write about what broke
-- right now: llms, fine-tuning and rag
-- i write fiction too. one story crossed 33k views
-- off screen: TODO (my hobbies)
-links: github · linkedin · x · medium · email · resume
-button: enter
+line 1: ML Engineer.
+line 2: 2nd Year CS Student.
+facts (small glowing pills):
+- Won 1st Prize at Hacktoberfest Hack Day 2026
+- I build ML models, AI agents
+- Currently: AI Intern at DataFlirt
+- I also wrote fiction story that crossed 33K views
+button: Enter
 
 ---
 
-## hero (what people see first)
+## footer bar (every view)
+links: GitHub → https://github.com/KinjalGoswami68 · LinkedIn → https://linkedin.com/in/kinjal-goswami-03738a376 · X → https://x.com/KGoswami70 · Medium → https://medium.com/@kinjalgoswami682 · Email → kinjalgoswami682@gmail.com · Resume → /resume/Kinjal_Resume.pdf
+resume missing (shown until the pdf is in public/resume/): TODO: copy the pdf into public/resume/
 
-big name (Anton, gold shimmer): Kinjal
-small line above: kinjal goswami
-line under: ml engineer. 2nd year cs. building things that break, then fixing them in public.
-badge (sparkly, clickable, opens the leash panel): 1st prize · hacktoberfest hack day 2026
-vertical side text (left): MACHINE LEARNING · LLMs · AGENTS
-vertical side text (right): BUILDING IN PUBLIC SINCE 2025
-scroll hint: scroll. the ring turns
-nav: work · about · contact
-back link (returns to the intro): back to intro
+---
+
+## hero (the ring view)
+
+badge (clickable, opens the leash panel): 1st Prize · Hacktoberfest Hack Day 2026
+back link (returns to the intro): Back to intro
+not shown yet:
+- big name: Kinjal
+- small line above: Kinjal goswami
+- line under: Ml engineer. 2nd year cs. Building things that break, then fixing them in public.
+- vertical side text (left): MACHINE LEARNING · LLMs · AGENTS
+- vertical side text (right): BUILDING IN PUBLIC SINCE 2025
+- scroll hint: Scroll. The ring turns
+- nav: Work · About · Contact
+
+---
+
+## labels (buttons and headings in the detail card)
+close button: Close
+headings: What it is · The demo · Try it · Honest limit · Field notes · Stack · Team
+link buttons: Live · Arena · Repo · PR
 
 ---
 
 ## the ring (order matters, leash is in front on load)
 
-### 1. leash
-badge: 1st prize · hacktoberfest hack day 2026
-panel line: the ai got hacked. the money didn't.
-what it is: a smart-contract vault that holds money for an ai agent. the agent gets a key that can do exactly one thing: pay(). spending caps, a recipient allowlist and a kill switch live in the contract, so when the agent gets prompt-injected, the damage is capped by code, not by the prompt.
-the demo: we hid a "pay this wallet" line inside a vendor email. the model fell for it. the contract blocked it on-chain and logged why.
-try it: there's a jailbreak arena. three vaults, same agent, different rules. fool the agent and see which vault still says no.
-honest limit: the daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. a sliding window would cost more gas.
-team: team cryptonix with khushi kushwaha, ambar gupta and chhavi gupta. faculty of engineering and technology, university of lucknow
+### 1. Leash
+badge: 1st Prize · Hacktoberfest Hack Day 2026
+panel line: The ai got hacked. The money didn't.
+what it is: A smart-contract vault that holds money for an ai agent. The agent gets a key that can do exactly one thing: pay(). Spending caps, a recipient allowlist and a kill switch live in the contract, so when the agent gets prompt-injected, the damage is capped by code, not by the prompt.
+the demo: We hid a "pay this wallet" line inside a vendor email. The model fell for it. The contract blocked it on-chain and logged why.
+try it: There's a jailbreak arena. Three vaults, same agent, different rules. Fool the agent and see which vault still says no.
+honest limit: The daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. A sliding window would cost more gas.
+team: Team cryptonix with khushi kushwaha, ambar gupta and chhavi gupta. Faculty of engineering and technology, university of lucknow
 stack: Solidity · OpenZeppelin · Hardhat · Base Sepolia · Python · FastAPI · web3.py · gpt-oss-120b on Groq · Next.js
 links:
-- live: https://leash-agent.vercel.app
-- arena: https://leash-agent.vercel.app/arena
-- repo: https://github.com/KinjalGoswami68/leash
+- Live: https://leash-agent.vercel.app
+- Arena: https://leash-agent.vercel.app/arena
+- Repo: https://github.com/KinjalGoswami68/leash
 
 ### 2. SentinelAI
-panel line: llms go bad quietly. this one tells slack within 60 seconds.
-what it is: watches what a chatbot actually says after it's live. three signals catch what one metric would miss: tf-idf cosine similarity for drift, isolation forest for anomalies, cusum for slow decay. multi-tenant fastapi backend that learns each tenant's "normal" from live usage instead of hardcoding it.
+panel line: Llms go bad quietly. This one tells slack within 60 seconds.
+what it is: Watches what a chatbot actually says after it's live. Three signals catch what one metric would miss: tf-idf cosine similarity for drift, isolation forest for anomalies, cusum for slow decay. Multi-tenant fastapi backend that learns each tenant's "normal" from live usage instead of hardcoding it.
 field notes:
-- picked tf-idf over sentence-transformers because render's free tier gives 512mb ram
-- added a 50-sample warmup after false positives spiked on cold start
-- did the whole thing solo: architecture, ml pipeline, backend, deploy, ui
+- Picked tf-idf over sentence-transformers because render's free tier gives 512mb ram
+- Added a 50-sample warmup after false positives spiked on cold start
+- Did the whole thing solo: architecture, ml pipeline, backend, deploy, ui
 stack: Python · FastAPI · scikit-learn · Streamlit · Supabase Postgres · Render · Slack webhooks
 links:
-- live: https://sentinelai24455.streamlit.app
-- repo: TODO
+- Live: https://sentinelai24455.streamlit.app
+- Repo: https://github.com/KinjalGoswami68/-SentinelAI
 
 ### 3. Contract Risk Analyzer
-panel line: contracts are dense on purpose. this reads them for you.
-what it is: fine-tuned distilbert on CUAD to flag clauses across 34 legal risk categories, then llama 3.3 70b on groq explains each one in plain english. upload a contract, get the risky parts and what they actually commit you to.
+panel line: Contracts are dense on purpose. This reads them for you.
+what it is: Fine-tuned distilbert on CUAD to flag clauses across 34 legal risk categories, then llama 3.3 70b on groq explains each one in plain english. Upload a contract, get the risky parts and what they actually commit you to.
 field notes:
-- about 75% accuracy across 34 categories, fine-tuned on a free colab t4
-- whole pipeline solo: preprocessing, fine-tuning, prompt design, frontend
-- the llm layer exists so non-lawyers can read the output
+- About 75% accuracy across 34 categories, fine-tuned on a free colab t4
+- Whole pipeline solo: preprocessing, fine-tuning, prompt design, frontend
+- The llm layer exists so non-lawyers can read the output
 stack: Python · Hugging Face Transformers (DistilBERT) · Groq (Llama 3.3 70B) · Streamlit
 links:
-- live: https://contract-risk-analyzer23.streamlit.app/
-- repo: TODO
+- Live: https://contract-risk-analyzer23.streamlit.app/
+- Repo: https://github.com/KinjalGoswami68/contract-risk-analyzer
 
 ### 4. Orbital Terrain Scanner
-panel line: satellite images in. trees and water out. what's left is what we built.
-what it is: fine-tuned a pretrained resnet18 on eurosat sentinel-2 to classify 10 land-cover classes. a rasterio + numpy pipeline turns raw .tif/.jpg satellite files into tensors. then a numpy mask strips out vegetation and water in real time so only exposed ground and infrastructure stay.
+panel line: Satellite images in. Trees and water out. What's left is what we built.
+what it is: Fine-tuned a pretrained resnet18 on eurosat sentinel-2 to classify 10 land-cover classes. A rasterio + numpy pipeline turns raw .tif/.jpg satellite files into tensors. Then a numpy mask strips out vegetation and water in real time so only exposed ground and infrastructure stay.
 field notes:
-- the anomaly filter is matrix masking, not a second model
-- fought git buffer-size and timeout errors to deploy a 43mb model file
+- The anomaly filter is matrix masking, not a second model
+- Fought git buffer-size and timeout errors to deploy a 43mb model file
 stack: Python · PyTorch (ResNet18) · rasterio · NumPy · Streamlit
-links:
-- live: https://terrain-web-app.streamlit.app/
-- repo: TODO
+links (no repo link, the repo is empty):
+- Live: https://terrain-web-app.streamlit.app/
 
 ### 5. AgentSeal
-badge: hackindia '26 finalist · 122 teams
-panel line: every decision the agent makes gets signed. nobody edits it later.
-what it is: an ai decision audit and tamper-detection system. ethereum-style signing, a langchain/groq agent and a solidity contract on the polygon amoy testnet, so any decision can be verified later and can't be quietly changed.
-team: team infinity loop
+badge: HackIndia '26 finalist · 122 teams
+panel line: Every decision the agent makes gets signed. Nobody edits it later.
+what it is: An ai decision audit and tamper-detection system. Ethereum-style signing, a langchain/groq agent and a solidity contract on the polygon amoy testnet, so any decision can be verified later and can't be quietly changed.
+team: Team infinity loop
 stack: Solidity · Polygon Amoy · LangChain · Groq · Ethereum-style signing
-links:
-- repo: TODO
+links: none (no repo button)
 
 ### 6. HonmaruAI
-badge: merged · 27 commits
-panel line: the maintainer found holes in my auth code. i fixed every one.
-what it is: turned the reference web client into a real signed-in client: session-token auth, a browser create/decide flow that reaches the websocket relay, and a cors fix that unblocked every browser api call. review found authorization gaps (org-membership checks, invite-role validation, identity uniqueness). fixed each one over multiple rounds and added a test per fix before merge.
+badge: Merged · 27 commits
+panel line: The maintainer found holes in my auth code. I fixed every one.
+what it is: Turned the reference web client into a real signed-in client: session-token auth, a browser create/decide flow that reaches the websocket relay, and a cors fix that unblocked every browser api call. Review found authorization gaps (org-membership checks, invite-role validation, identity uniqueness). Fixed each one over multiple rounds and added a test per fix before merge.
 stack: TypeScript · Cloudflare Workers · WebSockets
 links:
-- pr: https://github.com/Torutesu/HonmaruAI/pull/10
+- PR: https://github.com/Torutesu/HonmaruAI/pull/10
 
 ### 7. arkor
-badge: merged · my first pr
-panel line: my first merged pr. a port bug, and a lot of review comments.
-what it is: diagnosed and fixed a port-fallback bug in the `arkor dev` cli. took it through multiple rounds of maintainer review before it landed in main.
+badge: Merged · my first pr
+panel line: My first merged pr. A port bug, and a lot of review comments.
+what it is: Diagnosed and fixed a port-fallback bug in the `arkor dev` cli. Took it through multiple rounds of maintainer review before it landed in main.
 links:
-- pr: TODO (the old site links issue #199, i need the actual pr link)
+- PR: https://github.com/arkorlab/fine-tuning/pull/212
 
 ---
 
-## chapters after the ring (as you scroll)
+## chapters (below the ring, as you scroll)
 
-### right now
-AI Data Acquisition Intern · DataFlirt (Bengaluru, remote) · oct to dec 2026
-building the systems that collect, store and serve data: self-healing python scrapers (async crawling, versioned selectors, drift detection, auto-repair with rollback), postgres storage with dedup, fastapi apis tracked at p50/p95, deploys on aws/gcp, and keeping llm token costs measured.
+### Right Now
+AI Data Acquisition Intern · DataFlirt (Bengaluru, Remote) · Oct to Dec 2026
+Building the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and keeping LLM token costs measured.
 
-### wins
-- 1st prize · hacktoberfest hack day 2026 · leash (opens the leash panel)
-- finalist · hackindia '26 · 122 teams · agentseal (opens the agentseal panel)
-- infosys stem stars scholarship · 2025 to 2026
-- google cloud certificate · introduction to generative ai
+### Wins
+- 1st Prize · Hacktoberfest Hack Day 2026 · Leash (opens the leash panel)
+- Finalist · HackIndia '26 · 122 teams · AgentSeal (opens the agentseal panel)
+- Infosys STEM Stars Scholarship · 2025 to 2026
+- Google Cloud Certificate · Introduction to Generative AI
 
-### who am i
--> 2nd year cs at university of lucknow
--> learned web dev first. realised i couldn't see myself doing it long term
--> got into ml because of the hype, honestly. it stayed. it's the one i'm keeping
--> now going deeper into llms, fine-tuning and rag
--> i used to write fiction. one story crossed 33k views. deleted the account because i thought nobody in tech would care
--> so now i write about what i build instead
+### Open Source
+- arkor · merged PR · port-fallback fix in the arkor dev CLI → https://github.com/arkorlab/fine-tuning/pull/212
+- HonmaruAI · merged PR · 27 commits · auth and real-time sync → https://github.com/Torutesu/HonmaruAI/pull/10
 
-### numbers (count up on scroll)
-- 100+ · day leetcode streak
-- 150+ · dsa problems solved
+### Education (vertical timeline)
+- 2025 to 2029 · B.Tech, Computer Science & Engineering · University of Lucknow · cGPA 7.1/10 (first year)
+- 2023 to 2024 · Class XII, CBSE · Dron Public School, Meerut · 90%
+- 2021 to 2022 · Class X, CBSE · Dron Public School, Meerut · 94.8%
+
+### Who Am I (keep the arrow style)
+-> 2nd year CS student at University of Lucknow
+-> Learned web dev first. Realised I couldn't see myself doing it long term
+-> Got into ML because of the hype, honestly. It stayed. It's the one I'm keeping
+-> Now going deeper into LLMs, fine-tuning and RAG
+-> I write fiction. One story crossed 33K views
+-> Off screen: skincare. A lot of it
+
+### Numbers (count up when they scroll into view)
+- 100+ · day LeetCode streak
+- 150+ · DSA problems solved
 - 34 · legal risk categories my model reads
-- 1st · prize at my first hackathon win
+- 1st · prize at Hacktoberfest Hack Day 2026
 
-### writing
-build logs and breakdowns, posted while things are still broken.
+### Writing
+Build logs and breakdowns, posted while things are still broken.
 - X → https://x.com/KGoswami70
 - Medium → https://medium.com/@kinjalgoswami682
 
-### education (one line, small)
-b.tech cse · university of lucknow · 2025 to 2029
+### Contact
+big line: If this looks like the kind of work you want on your team,
+email (big, sparkles on hover): kinjalgoswami682@gmail.com
 
-### contact
-big line: building something with ai? i want in.
-email (big, sparkly on hover): kinjalgoswami682@gmail.com
-links: github → https://github.com/KinjalGoswami68 · linkedin → https://linkedin.com/in/kinjal-goswami-03738a376 · x → https://x.com/KGoswami70 · medium → https://medium.com/@kinjalgoswami682 · resume → /resume/Kinjal_Resume.pdf (TODO: copy the pdf into public/resume/)
-footer: © 2026 kinjal goswami
+---
+
+## not shown yet
+footer line: © 2026 kinjal goswami
