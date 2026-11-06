@@ -1,2 +1,5 @@
 /* background must match colors.background in src/theme.ts */
 html, body, #root { margin: 0; height: 100%; background: #0A0506; }
+
+/* the app fills the screen; the canvas and the overlay stack inside it */
+.app { position: relative; width: 100%; height: 100%; overflow: hidden; }

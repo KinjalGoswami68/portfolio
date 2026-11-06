@@ -1,0 +1,221 @@
+/* The HTML layer on top of the 3D canvas.
+   Colors and fonts come from src/theme.ts through the --variables set in App.tsx. */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* clicks and mouse moves pass through to the 3D canvas... */
+  font-family: var(--font-body), sans-serif;
+  color: var(--soft-white);
+}
+.overlay a,
+.overlay button {
+  pointer-events: auto; /* ...except on things you can actually click */
+}
+
+/* only for screen readers (e.g. "(opens in new tab)") */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* missing content: impossible to miss */
+.todo {
+  color: var(--cherry-glow);
+  font-weight: 600;
+}
+
+/* ---- the two views fade and slide ---- */
+.intro,
+.ring-hud {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.intro.is-hidden {
+  opacity: 0;
+  transform: translateX(-32px);
+}
+.ring-hud.is-hidden {
+  opacity: 0;
+}
+
+/* ---- intro: text on the left half ---- */
+.intro-text {
+  position: absolute;
+  top: 50%;
+  left: clamp(24px, 6vw, 96px);
+  transform: translateY(-55%);
+  width: min(46vw, 560px);
+}
+/* a soft dark wash behind the text so it stays readable over the 3D */
+.intro::before {
+  content: '';
+  position: absolute;
+  inset: 0 50% 0 0;
+  background: linear-gradient(to right, color-mix(in srgb, var(--background) 75%, transparent), transparent);
+}
+.intro-small {
+  margin: 0 0 8px;
+  color: var(--rose-grey);
+  font-size: 1.1rem;
+}
+.intro-name {
+  margin: 0 0 20px;
+  font-family: var(--font-title), sans-serif;
+  font-weight: 400; /* Anton is already bold */
+  font-size: clamp(2.8rem, 6.5vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+}
+.intro-line {
+  margin: 0 0 20px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+.intro-facts {
+  margin: 0 0 28px;
+  padding-left: 1.1em;
+  color: var(--rose-grey);
+  line-height: 1.7;
+}
+.intro-facts li::marker {
+  color: var(--gold);
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.social-links a {
+  color: var(--gold);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.social-links a:hover,
+.social-links a:focus-visible {
+  border-bottom-color: var(--gold);
+}
+
+/* visible keyboard focus everywhere */
+.overlay a:focus-visible,
+.overlay button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* ---- the glowing enter button ---- */
+.enter-button {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 44px;
+  font-family: var(--font-title), sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  background: color-mix(in srgb, var(--background) 60%, transparent);
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 0 18px var(--cherry-glow), inset 0 0 12px color-mix(in srgb, var(--cherry-glow) 35%, transparent);
+  animation: glow-pulse 2.8s ease-in-out infinite;
+}
+.enter-button:hover {
+  color: var(--soft-white);
+  box-shadow: 0 0 30px var(--cherry-glow), inset 0 0 16px color-mix(in srgb, var(--cherry-glow) 50%, transparent);
+}
+@keyframes glow-pulse {
+  50% {
+    box-shadow: 0 0 30px var(--cherry-glow), inset 0 0 16px color-mix(in srgb, var(--cherry-glow) 50%, transparent);
+  }
+}
+
+/* ---- ring view: back link + hero badge ---- */
+.back-link {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--rose-grey);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--rose-grey);
+  cursor: pointer;
+}
+.back-link:hover {
+  color: var(--soft-white);
+}
+.hero-badge {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 8px 20px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ---- gold shimmer on titles: a lighter band slowly sliding across ---- */
+.title-shimmer {
+  background: linear-gradient(100deg, var(--gold) 40%, var(--soft-white) 50%, var(--gold) 60%);
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+.hero-badge.title-shimmer {
+  /* the badge has a border, so clip the gradient to its text only */
+  -webkit-text-fill-color: transparent;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---- reduced motion: no shimmer, no pulse, no sliding, instant fades ---- */
+@media (prefers-reduced-motion: reduce) {
+  .title-shimmer {
+    animation: none;
+    background-position: 50% 0;
+  }
+  .enter-button {
+    animation: none;
+  }
+  .intro,
+  .ring-hud {
+    transition: none;
+  }
+  .intro.is-hidden {
+    transform: none;
+  }
+}
+
+/* narrow screens: the intro text takes the full width (proper mobile layout is part I) */
+@media (max-width: 700px) {
+  .intro-text {
+    width: auto;
+    right: 24px;
+  }
+  .intro::before {
+    inset: 0;
+  }
+}

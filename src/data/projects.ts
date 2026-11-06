@@ -9,7 +9,7 @@ export type ProjectLink = {
 
 export type Project = {
   id: string // unique, also used later for the URL hash (#leash)
-  name: string // shown in calligraphy
+  name: string // shown in the title font (Anton)
   image: string // screenshot file in public/projects/. placeholder is drawn if it's missing
   badge?: string
   panelLine: string

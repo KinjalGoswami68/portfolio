@@ -36,12 +36,14 @@ export default function ProjectPanel({ project }: { project: Project }) {
           emissive={colors.gold}
           emissiveIntensity={0.15}
           side={THREE.DoubleSide}
+          transparent // lets ProjectRing fade it in and out
         />
       </mesh>
 
       {/* the picture, on the inside of the curve (BackSide), once its texture is ready */}
+      {/* renderOrder 1 = drawn after the frame, so the see-through fade layers correctly */}
       {texture && (
-        <mesh geometry={pictureGeometry}>
+        <mesh geometry={pictureGeometry} renderOrder={1}>
           <meshStandardMaterial
             map={texture}
             emissiveMap={texture} // glow with the picture's own colors...
@@ -50,6 +52,7 @@ export default function ProjectPanel({ project }: { project: Project }) {
             roughness={0.6}
             side={THREE.BackSide}
             toneMapped={false} // show the picture's true colors
+            transparent // lets ProjectRing fade it in and out
           />
         </mesh>
       )}

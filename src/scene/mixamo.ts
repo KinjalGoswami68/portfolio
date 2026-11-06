@@ -64,7 +64,8 @@ const mixamoToVrm: Record<string, VRMHumanBoneName> = {
   mixamorigRightToeBase: 'rightToes',
 }
 
-export async function loadMixamoAnimation(url: string, vrm: VRM) {
+// inPlace = true strips forward/sideways hip movement (root motion), for the walk.
+export async function loadMixamoAnimation(url: string, vrm: VRM, inPlace = false) {
   const asset = await new FBXLoader().loadAsync(url)
   const clip = THREE.AnimationClip.findByName(asset.animations, 'mixamo.com') // Mixamo always uses this name
   if (!clip) throw new Error(`no Mixamo animation found in ${url}`)
@@ -82,6 +83,7 @@ export async function loadMixamoAnimation(url: string, vrm: VRM) {
   const restRotationInverse = new THREE.Quaternion()
   const parentRestRotation = new THREE.Quaternion()
   const rotation = new THREE.Quaternion()
+  let forwardDistance = 0
 
   for (const track of clip.tracks) {
     // a track name looks like "mixamorigLeftArm.quaternion"
@@ -109,11 +111,29 @@ export async function loadMixamoAnimation(url: string, vrm: VRM) {
       }
       tracks.push(new THREE.QuaternionKeyframeTrack(`${vrmNode.name}.${property}`, track.times, values))
     } else if (boneName === 'hips' && property === 'position') {
-      // hip movement: 3 numbers per keyframe (x, y, z), scaled to her size
-      const values = track.values.map((v, i) => (isVrm0 && i % 3 !== 1 ? -v : v) * hipsScale)
-      tracks.push(new THREE.VectorKeyframeTrack(`${vrmNode.name}.${property}`, track.times, values))
+      // hip movement: 3 numbers per keyframe (x, y, z)
+      const values = track.values.slice()
+      if (inPlace) {
+        // root motion: how far the hips travel forward (z) during one loop
+        const last = values.length - 3
+        forwardDistance = (values[last + 2] - values[2]) * hipsScale
+        // freeze x (sideways) and z (forward) at the first frame. keep y, the up/down bob
+        const startX = values[0]
+        const startZ = values[2]
+        for (let i = 0; i < values.length; i += 3) {
+          values[i] = startX
+          values[i + 2] = startZ
+        }
+      }
+      // scale to her size (and flip for old VRM 0.x files)
+      const scaled = values.map((v, i) => (isVrm0 && i % 3 !== 1 ? -v : v) * hipsScale)
+      tracks.push(new THREE.VectorKeyframeTrack(`${vrmNode.name}.${property}`, track.times, scaled))
     }
   }
 
-  return new THREE.AnimationClip('idle', clip.duration, tracks)
+  return {
+    clip: new THREE.AnimationClip(url, clip.duration, tracks),
+    // the speed the file was walking at, in her own units per second (0 if not inPlace)
+    forwardSpeed: forwardDistance / clip.duration,
+  }
 }

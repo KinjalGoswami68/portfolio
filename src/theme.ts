@@ -6,18 +6,15 @@ export const colors = {
   maroon: '#3B0A12', // deep maroon (floor, panel backgrounds)
   cherry: '#9E1B32', // cherry red
   cherryGlow: '#D2042D', // glowing cherry (floor glow, highlights)
-  gold: '#E8C27A', // champagne gold (calligraphy, sparkle, thin frames)
+  gold: '#E8C27A', // champagne gold (titles, sparkle, thin frames)
   softWhite: '#F4EDEE', // body text
   roseGrey: '#B9A7AB', // secondary text
 }
 
-// The three calligraphy fonts you can choose between.
-export const calligraphyFonts = ['Imperial Script', 'MonteCarlo', 'Hurricane'] as const
-
+// free Google Fonts, loaded in index.html
 export const fonts = {
-  // change this to 'MonteCarlo' or 'Hurricane' to compare. big titles and project names only
-  calligraphy: 'Imperial Script' as (typeof calligraphyFonts)[number],
-  sans: 'Inter', // everything else
+  title: 'Anton', // titles and project names (bold, straight)
+  body: 'Inter', // everything else
 }
 
 export const world = {
@@ -31,9 +28,26 @@ export const world = {
   dustCount: 60, // floating dust particles
 }
 
+// The two camera spots. position = where the eye is, target = the point it looks at.
+export const cameraViews = {
+  // close on her upper body. looking a bit to her left puts her on the right half of the screen
+  intro: { position: [-0.6, 1.5, 1.9], target: [-0.6, 1.4, 0] },
+  // high and back: the whole ring
+  ring: { position: [0, 6, 10], target: [0, 1, 0] },
+  moveSpeed: 2.2, // how quickly the camera glides between spots (higher = faster)
+} as const
+
 export const character = {
   scale: 1.2, // she's about 1.6 units tall in the file, 1.2x makes her about 2
-  idleAnimation: 'idle.fbx', // Mixamo file in public/animations/
+  walkStartX: -3.5, // where the walk-in starts (just past the left edge of the intro view)
+  waveRepeats: 4, // wave.fbx is a 0.53s waving loop, so one wave = this many loops (about 2s)
+  blendSeconds: 0.5, // how long one animation takes to blend into the next
+  turnSpeed: 4, // how fast she turns from walking sideways to facing the camera
+  headTurn: 0.25, // how far her head follows the mouse sideways (radians, about 14 degrees)
+  headTilt: 0.1, // and up/down (about 6 degrees)
+  blinkGapMin: 2, // seconds between blinks: random, between min and max
+  blinkGapMax: 6,
+  blinkSeconds: 0.15, // one blink, closed and open again
 }
 
 export const ring = {
@@ -44,4 +58,5 @@ export const ring = {
   frameThickness: 0.04, // how much gold frame shows around each picture
   panelEmission: 0.6, // how much the picture glows by itself (0 = only lit by lights)
   spinSpeed: 0.05, // radians per second (a full turn takes about 2 minutes)
+  fadeSpeed: 3, // how quickly the ring fades in/out when you enter or go back
 }

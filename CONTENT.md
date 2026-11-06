@@ -7,9 +7,24 @@ every word and link on the site comes from here. rules:
 
 ---
 
+## intro (the first screen)
+small line: hi, i'm
+name: KINJAL GOSWAMI
+line: ml engineer. 2nd year cs at university of lucknow. ai data acquisition intern at dataflirt.
+facts:
+- won 1st prize at hacktoberfest hack day 2026 with leash
+- i build ml systems end to end, then write about what broke
+- right now: llms, fine-tuning and rag
+- i write fiction too. one story crossed 33k views
+- off screen: TODO (my hobbies)
+links: github · linkedin · x · medium · email · resume
+button: enter
+
+---
+
 ## hero (what people see first)
 
-big name (calligraphy, gold sparkle): Kinjal
+big name (Anton, gold shimmer): Kinjal
 small line above: kinjal goswami
 line under: ml engineer. 2nd year cs. building things that break, then fixing them in public.
 badge (sparkly, clickable, opens the leash panel): 1st prize · hacktoberfest hack day 2026
@@ -17,6 +32,7 @@ vertical side text (left): MACHINE LEARNING · LLMs · AGENTS
 vertical side text (right): BUILDING IN PUBLIC SINCE 2025
 scroll hint: scroll. the ring turns
 nav: work · about · contact
+back link (returns to the intro): back to intro
 
 ---
 

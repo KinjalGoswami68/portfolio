@@ -43,14 +43,16 @@ palette (all in `src/theme.ts`, one place to change):
 - deep maroon #3B0A12
 - cherry red #9E1B32
 - glowing cherry #D2042D (floor glow, highlights)
-- champagne gold #E8C27A (calligraphy, sparkle, thin frames)
+- champagne gold #E8C27A (titles, sparkle, thin frames)
 - soft white #F4EDEE (body text)
 - muted rose grey #B9A7AB (secondary text)
 
 fonts (all free Google Fonts, set in `src/theme.ts`):
-- calligraphy for big titles and project names ONLY (it's unreadable small). make it switchable between: Imperial Script, MonteCarlo, Hurricane, so i can pick by looking
-- one clean readable sans for everything else (e.g. Inter)
-- calligraphy titles get a gold gradient with a slow sparkle/shimmer (and subtle drei `<Sparkles>` near them in 3D). no shimmer under prefers-reduced-motion
+- no calligraphy fonts anywhere (Imperial Script, MonteCarlo, Hurricane are removed)
+- titles and project names: Anton (bold, straight)
+- body text and everything else: Inter
+- titles keep the champagne gold color with a subtle shimmer (and subtle drei `<Sparkles>` near them in 3D). no shimmer under prefers-reduced-motion
+- project names on the 3D panels must be readable from the default camera
 
 the world should feel real:
 - the floor is a glossy dark maroon surface with soft reflections (drei MeshReflectorMaterial or similar), a cherry glow at its center under the character, fading to black at the edges. not a flat neon disc
@@ -61,9 +63,22 @@ the world should feel real:
 ## the character
 
 a warrior girl, my style. I'm building her in VRoid Studio and exporting `kinjal.vrm`. until that file exists, keep a placeholder (a simple feminine silhouette shape is fine, not the gray capsule) and make swapping in the VRM a one-line change.
-- idle: a confident warrior idle (weight shift, breathing), from Mixamo, retargeted to the VRM
 - she stands at the center of the floor, the ring orbits her
-- tell me exactly which Mixamo animations to download and how (FBX settings) when we reach part E
+- animations (Mixamo FBX, retargeted to the VRM) in `public/animations/`: idle.fbx (standing idle loop), walk.fbx (walking loop), wave.fbx (a wave)
+- walk.fbx: if it has forward root motion in the hips, strip the horizontal hip movement in code so she walks in place and our code moves her
+- on page load: she walks in from the left edge to her spot, blends smoothly into the wave once, then blends into the idle loop forever
+- automatic blinking with the VRM expression manager (random gaps of 2 to 6 seconds)
+- head and eyes softly follow the mouse with vrm.lookAt (small angle, natural, not creepy). paused while she's walking in
+- if any fbx fails to load: fall back to the breathing pose and log which file failed
+- prefers-reduced-motion: no walk-in, no wave, she just stands in her spot with the idle
+
+## the intro (the first screen)
+
+- the site opens with the camera close on her, upper body framed, her spot on the right half of the screen. the ring is hidden or far out of focus
+- the left half shows the intro from CONTENT.md: small line, name, line, facts, social links (all clickable, external ones in a new tab with rel="noopener noreferrer", email and resume as normal links)
+- a glowing "enter" button at center bottom. clicking it (or pressing Enter, or scrolling down) smoothly pulls the camera back and up to reveal her standing in the ring. the intro fades out, the ring and the hero badge fade in
+- a small "back to intro" link returns to the close-up
+- fully keyboard accessible. reduced-motion = instant cut instead of a camera move
 
 ## interaction
 
@@ -75,18 +90,23 @@ a warrior girl, my style. I'm building her in VRoid Studio and exporting `kinjal
 
 ## roadmap
 
-DONE: part A setup, part B world, part C ring (needs the rework below)
+DONE: part A setup, part B world, part C ring, part C2 world + ring rework, part E the girl
 
-PART C2: rework the world + ring
+PART C2 (done): rework the world + ring
 - new palette and fonts from "look and feel"
 - realistic glossy floor with center glow, fog, dust particles
-- 7 panels in CONTENT.md order (leash in front on load), gold frames, calligraphy name + panel line on placeholder textures until screenshots exist in `public/projects/` (leash.png, sentinelai.png, cra.png, orbital.png, agentseal.png, honmaruai.png, arkor.png)
+- 7 panels in CONTENT.md order (leash in front on load), gold frames, project name + panel line on placeholder textures until screenshots exist in `public/projects/` (leash.png, sentinelai.png, cra.png, orbital.png, agentseal.png, honmaruai.png, arkor.png)
 - images must never stretch (crop to fit, like object-fit cover)
+
+PART E2: intro, walk-in, alive, bold fonts
+- fonts: calligraphy out, Anton for titles and project names, Inter for body (see "look and feel")
+- animations: walk-in, wave, idle, blinking, lookAt, fallbacks, reduced motion (see "the character")
+- new front page: everything in "the intro"
 
 PART D: scroll + mouse
 - scroll turns the ring, camera drifts with the mouse
 
-PART E: the girl (ask before installing @pixiv/three-vrm)
+PART E (done): the girl (ask before installing @pixiv/three-vrm)
 - feminine placeholder now, VRM loader ready, Mixamo idle retargeting
 
 PART F: cinematic look (ask before installing postprocessing)

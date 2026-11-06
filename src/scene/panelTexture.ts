@@ -2,19 +2,20 @@ import * as THREE from 'three'
 import type { Project } from '../data/projects'
 import { colors, fonts } from '../theme'
 
-// Placeholder card size. 768 / 480 = 1.6, the same shape as a panel.
-const WIDTH = 768
-const HEIGHT = 480
+// Placeholder card size. 1024 / 640 = 1.6, the same shape as a panel.
+// bigger canvas = sharper text in 3D (but more memory, so not bigger than this)
+const WIDTH = 1024
+const HEIGHT = 640
 
 // A canvas can only draw a web font after it has downloaded. Wait for both fonts.
 export async function loadPanelFonts() {
   await Promise.all([
-    document.fonts.load(`120px "${fonts.calligraphy}"`),
-    document.fonts.load(`400 30px "${fonts.sans}"`),
+    document.fonts.load(`200px "${fonts.title}"`),
+    document.fonts.load(`400 40px "${fonts.body}"`),
   ])
 }
 
-// Paints a placeholder card (calligraphy name + panel line) onto a hidden 2D canvas
+// Paints a placeholder card (project name + panel line) onto a hidden 2D canvas
 // and turns it into a texture. Used until a screenshot exists in public/projects/.
 export function makePlaceholderTexture(project: Project) {
   const canvas = document.createElement('canvas')
@@ -32,15 +33,15 @@ export function makePlaceholderTexture(project: Project) {
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
 
-  // project name: calligraphy, start big and shrink until it fits
+  // project name: Anton, as big as fits (big = readable from the ring camera)
   const nameY = HEIGHT * 0.4
-  let nameSize = 130
-  ctx.font = `${nameSize}px "${fonts.calligraphy}"`
-  while (ctx.measureText(project.name).width > WIDTH - 120 && nameSize > 40) {
+  let nameSize = 200
+  ctx.font = `${nameSize}px "${fonts.title}"`
+  while (ctx.measureText(project.name).width > WIDTH - 120 && nameSize > 60) {
     nameSize -= 4
-    ctx.font = `${nameSize}px "${fonts.calligraphy}"`
+    ctx.font = `${nameSize}px "${fonts.title}"`
   }
-  // gold gradient: gold, a soft white shine in the middle, gold again
+  // champagne gold, with a soft lighter band through the middle
   const gold = ctx.createLinearGradient(0, nameY - nameSize / 2, 0, nameY + nameSize / 2)
   gold.addColorStop(0, colors.gold)
   gold.addColorStop(0.5, colors.softWhite)
@@ -48,12 +49,12 @@ export function makePlaceholderTexture(project: Project) {
   ctx.fillStyle = gold
   ctx.fillText(project.name, WIDTH / 2, nameY)
 
-  // panel line: clean sans, rose grey, wrapped onto several lines if needed
-  ctx.font = `400 30px "${fonts.sans}"`
+  // panel line: Inter, rose grey, wrapped onto several lines if needed
+  ctx.font = `400 40px "${fonts.body}"`
   ctx.fillStyle = colors.roseGrey
   const lines = wrapText(ctx, project.panelLine, WIDTH - 160)
   lines.forEach((line, i) => {
-    ctx.fillText(line, WIDTH / 2, HEIGHT * 0.7 + i * 42)
+    ctx.fillText(line, WIDTH / 2, HEIGHT * 0.72 + i * 54)
   })
 
   const texture = new THREE.CanvasTexture(canvas)

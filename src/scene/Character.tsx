@@ -10,8 +10,9 @@ export default function Character() {
   if (!MODEL_FILE) return <PlaceholderGirl />
 
   return (
-    // while the model downloads (it's big), the placeholder stands in
-    <Suspense fallback={<PlaceholderGirl />}>
+    // fallback={null}: nothing while the model downloads, so the mannequin
+    // doesn't stand at her spot and vanish right before she walks in
+    <Suspense fallback={null}>
       <VrmCharacter file={MODEL_FILE} />
     </Suspense>
   )
