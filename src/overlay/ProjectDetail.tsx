@@ -54,6 +54,29 @@ export default function ProjectDetail({ project, onClose }: Props) {
 
           <Section title={detailLabels.whatItIs} text={project.whatItIs} />
           {project.demo && <Section title={detailLabels.demo} text={project.demo} />}
+          {project.video && (
+            // preload none: nothing downloads until the visitor presses play. muted, no autoplay
+            <video
+              className="detail-video"
+              src={project.video.src}
+              poster={`${import.meta.env.BASE_URL}projects/${project.video.poster}`}
+              aria-label={project.video.alt}
+              preload="none"
+              controls
+              muted
+              playsInline
+            />
+          )}
+          {project.sections?.map((section) => (
+            <section key={section.title}>
+              <h3>{section.title}</h3>
+              <ul className="detail-notes">
+                {section.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+          ))}
           {project.tryIt && <Section title={detailLabels.tryIt} text={project.tryIt} />}
           {project.honestLimit && <Section title={detailLabels.honestLimit} text={project.honestLimit} />}
 
@@ -81,7 +104,18 @@ export default function ProjectDetail({ project, onClose }: Props) {
             </section>
           )}
 
-          {project.team && <Section title={detailLabels.team} text={project.team} />}
+          {project.tags && (
+            <section>
+              <h3>{detailLabels.tags}</h3>
+              <ul className="detail-stack">
+                {project.tags.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {project.team &&<Section title={detailLabels.team} text={project.team} />}
 
           {project.links.length > 0 && (
             <div className="detail-links">

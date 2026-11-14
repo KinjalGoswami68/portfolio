@@ -1,28 +1,119 @@
-// The project list for the ring, in ring order (leash is in front on load).
+// The project list for the ring, in ring order (shiftlens is in front on load).
 // Every word and link is copied from CONTENT.md. Don't edit copy here without editing CONTENT.md.
 
 export type ProjectLink = {
-  label: string // 'Live', 'Arena', 'Repo', 'PR'
+  label: string // 'Live', 'Live demo', 'Arena', 'Repo', 'GitHub', 'Website', 'PR'
   url: string
+}
+
+// a titled list in the detail card ("What it does", "How it works", ...)
+export type ProjectSection = {
+  title: string
+  items: string[]
 }
 
 export type Project = {
   id: string // unique, also the URL hash (#leash)
+  oldIds?: string[] // old hashes that still open this project (#sentinelai opens shiftlens)
   name: string // shown in the title font (Anton)
   image: string // screenshot file in public/projects/. placeholder is drawn if it's missing
   badge?: string
   panelLine: string
   whatItIs: string
   demo?: string // "The demo"
+  video?: { src: string; poster: string; alt: string } // shown under "The demo". poster is a file in public/projects/
+  sections?: ProjectSection[] // extra titled lists, shown after "The demo"
   tryIt?: string // "Try it"
   honestLimit?: string // "Honest limit"
   fieldNotes?: string[]
   team?: string
   stack?: string[]
+  tags?: string[]
   links: ProjectLink[]
 }
 
 export const projects: Project[] = [
+  {
+    id: 'shiftlens',
+    oldIds: ['sentinelai'], // the project used to be called SentinelAI. old links keep working
+    name: 'ShiftLens',
+    image: 'shiftlens.png',
+    badge: 'Formerly SentinelAI',
+    panelLine: 'Your chatbot changed and nobody told you.',
+    whatItIs:
+      "Chatbots don't crash when they get worse. Someone edits a prompt or swaps a model, the answers quietly change, and the team hears about it from users. ShiftLens learns what a bot's normal answers look like, and when they drift it opens one incident and an agent writes up the likely cause with the exact answers that prove it.",
+    demo: '82 seconds: an incident, a question to the agent, and the try without code page. The live demo needs no login.',
+    video: {
+      src: 'https://shiftlens.pages.dev/demo/shiftlens-demo.mp4',
+      poster: 'shiftlens-poster.jpg',
+      alt: 'ShiftLens incident page showing an investigation note with cited answers',
+    },
+    sections: [
+      {
+        title: 'What it does',
+        items: [
+          'Learns what normal looks like for each bot from its own answers, and says how sure it is before it starts alerting.',
+          'Catches drift in meaning, slow decline over time, rising refusals, and bad releases when a new prompt or model version ships.',
+          'Groups a bad hour into one incident with at most three Slack messages, instead of one alert per answer.',
+          `Runs an investigation agent: it compares the changed answers with normal ones, checks version changes, and writes a short note with the likely cause, a confidence, and the request ids as evidence. Any claim without evidence is dropped. When it can't tell why, it says "unknown, low confidence".`,
+          'Lets you ask the agent questions about an incident. Every claim it makes has to cite real answers.',
+          'Checks answer quality from the first answer (refusals, off-topic or empty replies), and spot-checks a sample of answers against the source documents the bot used.',
+        ],
+      },
+      {
+        title: 'How it works',
+        items: [
+          "Each answer is embedded on CPU with bge-small-en-v1.5. For every new answer it measures the distance to its 5th nearest neighbour among the bot's normal answers.",
+          'A bot only goes live when its alert threshold is stable, instead of after a fixed warm-up.',
+          'Two CUSUM trackers catch slow drift and rising refusals. A version check compares answers from a new prompt or model version against the baseline.',
+          "Math decides whether there's a problem. The LLM only writes the explanation, and can lower the confidence but never raise it.",
+        ],
+      },
+      {
+        title: 'In my test scenarios',
+        items: [
+          'One round of scripted tests. Every number is on the public scorecard.',
+          'Named the right cause in 7 of 8 test scenarios. The miss (a topic shift it called "unknown") is on the scorecard too.',
+          '0 of 2 false incidents on normal traffic.',
+          'Caught a bad prompt change after 10 answers.',
+          'Single normal answers wrongly flagged went from 5 in 60 in the first version to 1 in 60.',
+        ],
+      },
+    ],
+    tryIt: "There's a try without code page. Paste answers from before and after a change and get the same investigation.",
+    honestLimit:
+      "It doesn't detect hallucinations in general. It catches when a bot's behaviour changes, and flags answers its source documents don't support. It's been tested on scripted scenarios and a demo bot, not yet on real production traffic.",
+    fieldNotes: [
+      'Runs entirely on free tiers. Detection uses no LLM call per answer.',
+      'I designed, built and shipped all of it: backend, detection, the agent, the web app and the landing page.',
+    ],
+    stack: [
+      'Python',
+      'FastAPI',
+      'Supabase Postgres',
+      'FastEmbed (bge-small-en-v1.5, ONNX, CPU)',
+      'NumPy',
+      'Groq (gpt-oss-120b, gpt-oss-20b, qwen3.8-27b)',
+      'pydantic',
+      'Slack webhooks',
+      'Render',
+      'GitHub Actions',
+      'Cloudflare Pages',
+      'Vite',
+      'React',
+      'TypeScript',
+      'Tailwind',
+      'GSAP',
+      'uPlot',
+      'Playwright',
+    ],
+    tags: ['LLM monitoring', 'Agents', 'Embeddings', 'Anomaly detection', 'FastAPI', 'Postgres', 'React', 'TypeScript'],
+    links: [
+      { label: 'Live demo', url: 'https://shiftlens.pages.dev/app/demo/' },
+      { label: 'GitHub', url: 'https://github.com/KinjalGoswami68/ShiftLens' },
+      { label: 'Website', url: 'https://shiftlens.pages.dev' },
+    ],
+  },
   {
     id: 'leash',
     name: 'Leash',
@@ -41,23 +132,6 @@ export const projects: Project[] = [
       { label: 'Live', url: 'https://leash-agent.vercel.app' },
       { label: 'Arena', url: 'https://leash-agent.vercel.app/arena' },
       { label: 'Repo', url: 'https://github.com/KinjalGoswami68/leash' },
-    ],
-  },
-  {
-    id: 'sentinelai',
-    name: 'SentinelAI',
-    image: 'sentinelai.png',
-    panelLine: 'LLMs go bad quietly. This one tells Slack within 60 seconds.',
-    whatItIs: `Watches what a chatbot actually says after it's live. Three signals catch what one metric would miss: TF-IDF cosine similarity for drift, isolation forest for anomalies, CUSUM for slow decay. Multi-tenant FastAPI backend that learns each tenant's "normal" from live usage instead of hardcoding it.`,
-    fieldNotes: [
-      "Picked TF-IDF over sentence-transformers because Render's free tier gives 512MB RAM",
-      'Added a 50-sample warmup after false positives spiked on cold start',
-      'Did the whole thing solo: architecture, ML pipeline, backend, deploy, UI',
-    ],
-    stack: ['Python', 'FastAPI', 'scikit-learn', 'Streamlit', 'Supabase Postgres', 'Render', 'Slack webhooks'],
-    links: [
-      { label: 'Live', url: 'https://sentinelai24455.streamlit.app' },
-      { label: 'Repo', url: 'https://github.com/KinjalGoswami68/-SentinelAI' },
     ],
   },
   {

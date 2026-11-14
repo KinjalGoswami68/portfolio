@@ -26,6 +26,7 @@ export const detailLabels = {
   honestLimit: 'Honest limit',
   fieldNotes: 'Field notes',
   stack: 'Stack',
+  tags: 'Tags',
   team: 'Team',
 }
 

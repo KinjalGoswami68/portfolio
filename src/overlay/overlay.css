@@ -394,6 +394,15 @@
   padding-left: 1.1em;
   color: var(--rose-grey);
 }
+.detail-video {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  aspect-ratio: 16 / 9;
+  background: var(--background);
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  border-radius: 8px;
+}
 .detail-card code {
   padding: 1px 5px;
   font-size: 0.9em;

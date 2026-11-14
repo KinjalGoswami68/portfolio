@@ -25,7 +25,7 @@ type Props = {
 }
 
 // All project panels, spaced evenly in a circle around the character.
-// The first project (leash) starts in front, facing the camera.
+// The first project (shiftlens) starts in front, facing the camera.
 export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
   // a ref = a direct handle to the real three.js object
   const ringRef = useRef<THREE.Group>(null)

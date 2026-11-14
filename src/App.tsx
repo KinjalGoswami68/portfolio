@@ -31,10 +31,10 @@ const themeVariables = {
   '--font-body': `'${fonts.body}'`,
 } as CSSProperties
 
-// #leash in the address bar -> the index of that project (-1 if none)
+// #leash in the address bar -> the index of that project (-1 if none). old ids (#sentinelai) still work
 function projectIndexFromHash() {
   const id = window.location.hash.slice(1)
-  return projects.findIndex((project) => project.id === id)
+  return projects.findIndex((project) => project.id === id || project.oldIds?.includes(id))
 }
 
 // App does layout only: the 3D canvas at the back, the HTML overlay on top.
