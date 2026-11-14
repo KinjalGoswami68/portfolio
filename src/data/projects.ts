@@ -123,14 +123,11 @@ export const projects: Project[] = [
     whatItIs:
       'A smart-contract vault that holds money for an AI agent. The agent gets a key that can do exactly one thing: pay(). Spending caps, a recipient allowlist and a kill switch live in the contract, so when the agent gets prompt-injected, the damage is capped by code, not by the prompt.',
     demo: 'We hid a "pay this wallet" line inside a vendor email. The model fell for it. The contract blocked it on-chain and logged why.',
-    tryIt:
-      "There's a jailbreak arena. Three vaults, same agent, different rules. Fool the agent and see which vault still says no.",
     honestLimit:
       'The daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. A sliding window would cost more gas.',
     stack: ['Solidity', 'OpenZeppelin', 'Hardhat', 'Base Sepolia', 'Python', 'FastAPI', 'web3.py', 'gpt-oss-120b on Groq', 'Next.js'],
     links: [
-      { label: 'Live', url: 'https://leash-agent.vercel.app' },
-      { label: 'Arena', url: 'https://leash-agent.vercel.app/arena' },
+      // Live and Arena hidden until leash-agent.vercel.app is redeployed (it returns 404)
       { label: 'Repo', url: 'https://github.com/KinjalGoswami68/leash' },
     ],
   },
