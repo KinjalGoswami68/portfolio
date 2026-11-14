@@ -2,7 +2,7 @@
 // Every word and link is copied from CONTENT.md. Don't edit copy here without editing CONTENT.md.
 
 export type ProjectLink = {
-  label: string // 'Live', 'Live demo', 'Arena', 'Repo', 'GitHub', 'Website', 'PR'
+  label: string // 'Live', 'Live demo', 'Arena', 'GitHub', 'Website', 'PR'
   url: string
 }
 
@@ -128,7 +128,7 @@ export const projects: Project[] = [
     stack: ['Solidity', 'OpenZeppelin', 'Hardhat', 'Base Sepolia', 'Python', 'FastAPI', 'web3.py', 'gpt-oss-120b on Groq', 'Next.js'],
     links: [
       // Live and Arena hidden until leash-agent.vercel.app is redeployed (it returns 404)
-      { label: 'Repo', url: 'https://github.com/KinjalGoswami68/leash' },
+      { label: 'GitHub', url: 'https://github.com/KinjalGoswami68/leash' },
     ],
   },
   {
@@ -146,7 +146,7 @@ export const projects: Project[] = [
     stack: ['Python', 'Hugging Face Transformers (DistilBERT)', 'Groq (Llama 3.3 70B)', 'Streamlit'],
     links: [
       { label: 'Live', url: 'https://contract-risk-analyzer23.streamlit.app/' },
-      { label: 'Repo', url: 'https://github.com/KinjalGoswami68/contract-risk-analyzer' },
+      { label: 'GitHub', url: 'https://github.com/KinjalGoswami68/contract-risk-analyzer' },
     ],
   },
   {

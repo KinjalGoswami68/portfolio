@@ -46,7 +46,7 @@ not shown yet:
 ## labels (buttons and headings in the detail card)
 close button: Close
 headings: What it is · The demo · What it does · How it works · In my test scenarios · Try it · Honest limit · Field notes · Stack · Tags · Team
-link buttons: Live · Live demo · Arena · Repo · GitHub · Website · PR
+link buttons: Live · Live demo · Arena · GitHub · Website · PR
 
 ---
 
@@ -98,7 +98,7 @@ the demo: We hid a "pay this wallet" line inside a vendor email. The model fell 
 honest limit: The daily cap uses a fixed 24h window, so worst case is 2x the limit across a window edge. A sliding window would cost more gas.
 stack: Solidity · OpenZeppelin · Hardhat · Base Sepolia · Python · FastAPI · web3.py · gpt-oss-120b on Groq · Next.js
 links (live demo and arena hidden until redeployed, leash-agent.vercel.app returns 404):
-- Repo: https://github.com/KinjalGoswami68/leash
+- GitHub: https://github.com/KinjalGoswami68/leash
 
 ### 3. Contract Risk Analyzer
 panel line: Contracts are dense on purpose. This reads them for you.
@@ -110,7 +110,7 @@ field notes:
 stack: Python · Hugging Face Transformers (DistilBERT) · Groq (Llama 3.3 70B) · Streamlit
 links:
 - Live: https://contract-risk-analyzer23.streamlit.app/
-- Repo: https://github.com/KinjalGoswami68/contract-risk-analyzer
+- GitHub: https://github.com/KinjalGoswami68/contract-risk-analyzer
 
 ### 4. Orbital Terrain Scanner
 panel line: Satellite images in. Trees and water out. What's left is what we built.
