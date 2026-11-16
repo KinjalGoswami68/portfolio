@@ -2,13 +2,15 @@ import { useMemo } from 'react'
 import * as THREE from 'three'
 import { MeshReflectorMaterial, Sparkles, Stars } from '@react-three/drei'
 import { colors, world } from '../theme'
+import type { Quality } from './AutoQuality'
 
 // brighter than "normal" colors, so bloom picks them up (see effects in theme.ts)
 const glowColor = new THREE.Color(colors.cherryGlow).multiplyScalar(world.glowBoost)
 const sparkleColor = new THREE.Color(colors.goldBright).multiplyScalar(world.sparkleBoost)
 
 // The environment: background, fog, stars, glossy floor, center glow, lights, dust.
-export default function World() {
+// quality low (a struggling graphics chip): the floor drops its mirror for a plain glossy surface
+export default function World({ quality }: { quality: Quality }) {
   // the soft round glow picture, painted once
   const glowTexture = useMemo(() => makeGlowTexture(), [])
 
@@ -24,8 +26,13 @@ export default function World() {
       <Stars radius={60} depth={40} count={world.starCount} factor={3} saturation={0} fade speed={0.3} />
 
       {/* glossy floor: a dark maroon mirror with blurred reflections */}
+      {/* the mirror draws the whole scene a second time every frame, so on low quality it's a plain glossy
+          floor instead: no reflection, but the cherry light still makes a shiny hotspot on it */}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <circleGeometry args={[world.floorRadius, 64]} />
+        {quality === 'low' ? (
+          <meshStandardMaterial color={colors.maroon} metalness={0.5} roughness={0.45} />
+        ) : (
         <MeshReflectorMaterial
           color={colors.maroon}
           metalness={0.4}
@@ -38,6 +45,7 @@ export default function World() {
           minDepthThreshold={0.4}
           maxDepthThreshold={1.4}
         />
+        )}
       </mesh>
 
       {/* cherry glow on the floor under the character */}

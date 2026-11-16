@@ -5,6 +5,7 @@ import Footer from './overlay/Footer'
 import ProjectDetail from './overlay/ProjectDetail'
 import Chapters from './overlay/Chapters'
 import CharacterLoader from './overlay/CharacterLoader'
+import FpsCounter from './overlay/FpsCounter'
 import { projects } from './data/projects'
 import { cameraViews, colors, fonts, ring } from './theme'
 import { sceneState } from './sceneState'
@@ -187,6 +188,8 @@ export default function App() {
 
       <div className="overlay">
         <CharacterLoader view={view} />
+        {/* frames per second, only during `npm run dev` (import.meta.env.DEV is false on the real site) */}
+        {import.meta.env.DEV && <FpsCounter />}
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
         <RingHud shown={view === 'ring'} onBack={backToIntro} onOpen={openProject} />
         <Footer />

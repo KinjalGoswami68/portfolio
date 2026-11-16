@@ -21,7 +21,7 @@ export const fonts = {
 export const world = {
   floorRadius: 16, // big, so its edges disappear into the fog
   glowRadius: 3.5, // size of the cherry glow under the character
-  reflectionResolution: 512, // lower (256) = faster, blurrier reflections
+  reflectionResolution: 256, // size of the hidden mirror picture. was 512: the heavy blur hides the difference, 4x fewer pixels
   reflectionStrength: 15, // how strongly the floor mirrors things. 0 = no reflection
   fogNear: 10, // fog starts this far from the camera
   fogFar: 28, // and is fully black this far away
@@ -40,6 +40,13 @@ export const world = {
 // Post-processing: effects applied to the finished picture, like a photo filter
 export const effects = {
   maxPixelRatio: 1.25, // lower than before: the effects add work for every pixel
+  // automatic quality (AutoQuality in Scene.tsx): below this fps it switches to low, above the other back to high
+  lowQualityBelowFps: 38,
+  highQualityAboveFps: 55,
+  lowQualityPixelRatio: 0.8, // low quality draws 80% of the pixels per side (and no mirror floor, no bloom)
+  // drawing less while the 3D is mostly covered: 30 fps instead of every frame
+  cardSettleSeconds: 1.6, // after a project card opens (the panel's flight and the sparkle burst finish first)
+  chaptersCoverAt: 0.1, // once the chapters are this far scrolled in (0 to 1)
   bloomThreshold: 0.9, // only things brighter than this glow (floor glow, sparkles, frame shimmer)
   bloomIntensity: 1.1, // how strong the glow is
   bloomRadius: 0.7, // how far the glow spreads
