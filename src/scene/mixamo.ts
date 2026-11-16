@@ -65,8 +65,9 @@ const mixamoToVrm: Record<string, VRMHumanBoneName> = {
 }
 
 // inPlace = true strips forward/sideways hip movement (root motion), for the walk.
-export async function loadMixamoAnimation(url: string, vrm: VRM, inPlace = false) {
-  const asset = await new FBXLoader().loadAsync(url)
+// onProgress gets the bytes downloaded so far (for the loader's percentage).
+export async function loadMixamoAnimation(url: string, vrm: VRM, inPlace = false, onProgress?: (loaded: number) => void) {
+  const asset = await new FBXLoader().loadAsync(url, (event) => onProgress?.(event.loaded))
   const clip = THREE.AnimationClip.findByName(asset.animations, 'mixamo.com') // Mixamo always uses this name
   if (!clip) throw new Error(`no Mixamo animation found in ${url}`)
   const isVrm0 = vrm.meta.metaVersion === '0' // old VRM files face the other way

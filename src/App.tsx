@@ -1,20 +1,19 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { Canvas } from '@react-three/fiber'
-import World from './scene/World'
-import Character from './scene/Character'
-import ProjectRing from './scene/ProjectRing'
-import CameraRig from './scene/CameraRig'
-import Effects from './scene/Effects'
+import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties } from 'react'
 import Intro from './overlay/Intro'
 import RingHud from './overlay/RingHud'
 import Footer from './overlay/Footer'
 import ProjectDetail from './overlay/ProjectDetail'
 import Chapters from './overlay/Chapters'
+import CharacterLoader from './overlay/CharacterLoader'
 import { projects } from './data/projects'
-import { cameraViews, colors, effects, fonts, ring } from './theme'
+import { cameraViews, colors, fonts, ring } from './theme'
 import { sceneState } from './sceneState'
-import * as THREE from 'three'
 import './overlay/overlay.css'
+
+// the 3D scene (three.js and friends) arrives in its own file, after the intro is already on screen
+const Scene = lazy(() => import('./scene/Scene'))
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 
 // which screen we're on: the close-up intro, or the full ring
 export type View = 'intro' | 'ring'
@@ -107,7 +106,7 @@ export default function App() {
     sceneState.orbitYaw -= (event.clientX - last.x) * orbit.yawPerPixel
     // drag down: the camera rises. clamped so it never dips under the floor or goes top-down
     const tilted = sceneState.orbitPitch + (event.clientY - last.y) * orbit.pitchPerPixel
-    sceneState.orbitPitch = THREE.MathUtils.clamp(tilted, orbit.minPitch, orbit.maxPitch)
+    sceneState.orbitPitch = clamp(tilted, orbit.minPitch, orbit.maxPitch)
     sceneState.lastOrbitDragAt = performance.now() // restarts the 3 second glide-back timer
     dragRef.current = { x: event.clientX, y: event.clientY }
   }
@@ -147,21 +146,15 @@ export default function App() {
 
   return (
     <div ref={appRef} className="app" style={themeVariables}>
-      <Canvas
-        // the camera starts at the intro close-up. CameraRig moves it from there
-        camera={{ position: [...cameraViews.intro.position], fov: 45 }}
-        // dpr caps pixel density so integrated graphics stays smooth (the effects cost per pixel)
-        dpr={[1, effects.maxPixelRatio]}
-        // track the mouse over the whole page, even over the HTML text, so her eyes can follow it
-        eventSource={appRef as React.RefObject<HTMLElement>}
-        eventPrefix="client"
-      >
-        <World />
-        <Character />
-        <ProjectRing shown={view === 'ring'} openIndex={openIndex} onOpen={openProject} />
-        <CameraRig view={view} />
-        <Effects />
-      </Canvas>
+      {/* fallback null: the page background is already dark, and the loader shows at her spot */}
+      <Suspense fallback={null}>
+        <Scene
+          view={view}
+          openIndex={openIndex}
+          onOpen={openProject}
+          eventSource={appRef as React.RefObject<HTMLElement>}
+        />
+      </Suspense>
 
       {/* the scrolling layer: in the ring view, scrolling it spins the ring and dragging it orbits the camera.
           it's see-through, and mouse events still reach the 3D through eventSource */}
@@ -177,7 +170,7 @@ export default function App() {
           const chaptersStart = (ring.scrollScreens - 1) * screen
           const scrollable = element.scrollHeight - screen - chaptersStart
           const progress = (element.scrollTop - chaptersStart) / Math.max(scrollable, 1)
-          sceneState.chapterProgress = THREE.MathUtils.clamp(progress, 0, 1)
+          sceneState.chapterProgress = clamp(progress, 0, 1)
         }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -193,6 +186,7 @@ export default function App() {
       </div>
 
       <div className="overlay">
+        <CharacterLoader view={view} />
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
         <RingHud shown={view === 'ring'} onBack={backToIntro} onOpen={openProject} />
         <Footer />

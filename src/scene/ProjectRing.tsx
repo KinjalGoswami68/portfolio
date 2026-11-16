@@ -5,6 +5,8 @@ import { projects } from '../data/projects'
 import { colors, ring, world } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import { sceneState } from '../sceneState'
+
+const hoverCenter = new THREE.Vector3() // reused every frame (no new object per frame)
 import ProjectPanel from './ProjectPanel'
 import { fadeBurst, makeBurstGeometry, makeDotTexture } from './burst'
 import { makeShimmerTexture, slideShimmer } from './panelTexture'
@@ -116,7 +118,10 @@ export default function ProjectRing({ shown, openIndex, onOpen }: Props) {
 
     // tell her where the hovered panel is, so she can turn her head toward it
     const hovered = panelRefs.current[sceneState.hoveredIndex]
-    if (hovered) hovered.localToWorld(sceneState.hoveredPosition.set(0, ring.panelY, -ring.radius))
+    if (hovered) {
+      const center = hovered.localToWorld(hoverCenter.set(0, ring.panelY, -ring.radius))
+      Object.assign(sceneState.hoveredPosition, { x: center.x, y: center.y, z: center.z })
+    }
 
     // gold sparkle burst: starts when a panel opens, grows outward a little and fades out
     if (openIndex !== lastOpenRef.current) {

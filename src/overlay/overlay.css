@@ -725,3 +725,66 @@
     inset: 0;
   }
 }
+
+/* ---- the loader at her spot, while the character downloads ---- */
+.character-loader {
+  position: absolute;
+  /* intro: her spot on the right half of the screen */
+  left: 71%;
+  top: 46%;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.6s ease, left 0.8s ease, top 0.8s ease;
+}
+/* ring view (for example opened from a #project link): she stands in the middle */
+.character-loader.at-ring {
+  left: 50%;
+  top: 58%;
+}
+.character-loader.is-done {
+  opacity: 0;
+}
+/* a thin gold ring, brighter on one side, slowly turning, with a soft glow */
+.loader-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--gold) 25%, transparent) 120deg,
+    var(--gold-bright) 300deg,
+    transparent 360deg
+  );
+  /* cut out the middle so only a 2px ring is left (closest-side: 100% = the ring's own edge) */
+  mask: radial-gradient(circle closest-side, transparent calc(100% - 2.5px), #000 calc(100% - 2px));
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gold) 70%, transparent));
+  animation: loader-turn 1.6s linear infinite;
+}
+.loader-percent {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--gold) 60%, transparent);
+  font-variant-numeric: tabular-nums; /* digits keep the same width, so the number doesn't wobble */
+}
+@keyframes loader-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .loader-ring {
+    animation: none;
+  }
+}
+@media (max-width: 700px) {
+  .character-loader {
+    left: 70%;
+    top: 40%;
+  }
+}

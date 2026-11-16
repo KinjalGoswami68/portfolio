@@ -87,6 +87,8 @@ export const character = {
   gestureGapMin: 8, // seconds between small natural actions: random, between min and max
   gestureGapMax: 12,
   hoverHeadTurn: 0.8, // how far she can turn her head toward a hovered panel (radians, about 45 degrees)
+  slowLoadSeconds: 4, // if she took longer than this to load, skip the walk-in: she fades in at her spot and waves
+  fadeSeconds: 0.8, // how long that fade-in takes
 }
 
 export const ring = {

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# original, full-size assets. scripts/shrink-vrm.mjs makes the shipped copy in public/models/
+source-assets

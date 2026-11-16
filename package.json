@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "check-links": "node scripts/check-links.mjs"
+    "check-links": "node scripts/check-links.mjs",
+    "shrink-vrm": "node scripts/shrink-vrm.mjs",
+    "verify-vrm": "node scripts/verify-vrm.mjs"
   },
   "dependencies": {
     "@pixiv/three-vrm": "^3.5.5",
@@ -27,6 +29,7 @@
     "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.90.0",
+    "sharp": "^0.35.5",
     "typescript": "~7.0.2",
     "vite": "^8.3.6"
   }

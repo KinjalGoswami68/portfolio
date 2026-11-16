@@ -6,6 +6,13 @@
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>kinjal-3d</title>
+    <!-- start downloading the character right away, in parallel with the JavaScript (not after it).
+         as="fetch" + crossorigin matches how three.js requests them, so the browser reuses these downloads.
+         fetchpriority low: the intro's own files (JavaScript, CSS, fonts) still go first -->
+    <link rel="preload" href="%BASE_URL%models/kinjal.vrm" as="fetch" crossorigin="anonymous" fetchpriority="low" />
+    <link rel="preload" href="%BASE_URL%animations/walk.fbx" as="fetch" crossorigin="anonymous" fetchpriority="low" />
+    <link rel="preload" href="%BASE_URL%animations/wave.fbx" as="fetch" crossorigin="anonymous" fetchpriority="low" />
+    <link rel="preload" href="%BASE_URL%animations/idle.fbx" as="fetch" crossorigin="anonymous" fetchpriority="low" />
     <!-- free Google Fonts: Anton (titles) + Inter (body). names must match src/theme.ts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
