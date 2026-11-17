@@ -9,9 +9,6 @@ export const sceneState = {
   orbitPitch: 0, // and how far up or down they've tilted it (the goal)
   lastOrbitDragAt: -Infinity, // performance.now() of the last drag, for the glide back
   orbitSnap: false, // true = jump straight to the goal next frame (double-click reset)
-  quality: 'high' as 'high' | 'low', // picked automatically from the frame rate (see AutoQuality in Scene.tsx)
-  renderReduced: false, // true while the 3D is mostly covered (card open, chapters), so it draws at 30 fps
-  lastReducedAt: -Infinity, // performance.now() when it last was (AutoQuality ignores those slower frames)
   hoveredIndex: -1, // which panel the mouse is on (-1 = none)
   hoveredPosition: { x: 0, y: 0, z: 0 }, // where that panel's center is in the world
   // (a plain object, not a THREE.Vector3, so this file doesn't pull three.js into the first download)

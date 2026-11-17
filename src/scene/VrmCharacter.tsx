@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { useFrame, useLoader, useThree } from '@react-three/fiber'
+import { useFrame, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
 import { GLTFLoader, type GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { VRMLoaderPlugin, VRMUtils, type VRM } from '@pixiv/three-vrm'
@@ -7,7 +7,6 @@ import { character } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import { loadMixamoAnimation } from './mixamo'
 import { sceneState } from '../sceneState'
-import { loadingState } from '../loadingState'
 import {
   aimEyes,
   applyGesturePose,
@@ -21,9 +20,7 @@ import {
 } from './characterLife'
 
 // what she is doing right now (a tiny "state machine")
-// loading: files still downloading, she's hidden. warmup: drawn tiny for a few frames so the
-// graphics card prepares her shaders and textures before anyone sees her (no freeze when she appears)
-type Phase = 'loading' | 'warmup' | 'walk' | 'fadeIn' | 'wave' | 'idle' | 'breathing'
+type Phase = 'loading' | 'walk' | 'wave' | 'idle' | 'breathing'
 
 type Animations = {
   mixer: THREE.AnimationMixer // plays and blends the clips
@@ -36,36 +33,22 @@ type Animations = {
 const ANIMATION_FILES = ['walk.fbx', 'wave.fbx', 'idle.fbx']
 const FACING_RIGHT = Math.PI / 2 // turned 90 degrees: walking toward the right of the screen
 const FALLBACK_WALK_SPEED = 1.2 // used only if walk.fbx turns out to have no forward motion
-const WARMUP_FRAMES = 3 // frame 0: normal shaders, frame 1: see-through shaders (for the fade), frame 2: back to normal
 
 // The real character: loads the .vrm, walks in, waves, idles, blinks, follows the mouse.
 export default function VrmCharacter({ file }: { file: string }) {
   // load the file. the plugin teaches GLTFLoader to read the VRM parts (bones, face, physics)
-  const gltf = useLoader(
-    GLTFLoader,
-    `${import.meta.env.BASE_URL}models/${file}`,
-    (loader) => {
-      loader.register((parser) => new VRMLoaderPlugin(parser))
-    },
-    (event) => loadingState.reportBytes(file, event.loaded), // feeds the loader's percentage
-  )
+  const gltf = useLoader(GLTFLoader, `${import.meta.env.BASE_URL}models/${file}`, (loader) => {
+    loader.register((parser) => new VRMLoaderPlugin(parser))
+  })
   const vrm = prepareVrm(gltf)
-  const gl = useThree((state) => state.gl)
-  const scene = useThree((state) => state.scene)
-  const camera = useThree((state) => state.camera)
 
   const walksIn = !prefersReducedMotion // reduced motion: no walk-in, no wave
   const bodyRef = useRef<THREE.Group>(null) // moves and turns her as a whole
-  const animationsRef = useRef<Animations | null>(null) // null until she appears
-  const loadedRef = useRef<Animations | null>(null) // the 3 animations, ready but waiting for the warmup to finish
-  const slowRef = useRef(false) // true = loading took too long: skip the walk-in, fade in at her spot instead
+  const animationsRef = useRef<Animations | null>(null) // null until all 3 files have loaded
   const phaseRef = useRef<Phase>('loading')
   const phaseTimeRef = useRef(0) // seconds since the current phase started
-  const warmupFrameRef = useRef(0)
-  const materialsRef = useRef<MaterialList | null>(null) // her materials, for the fade-in
   const blinkRef = useRef(newBlinkState())
   const gestureRef = useRef(newGestureState()) // the small actions she does while idling
-  const gestureClockStartedRef = useRef(false)
   const headRef = useRef({ yaw: 0, pitch: 0 }) // the head's current mouse-follow turn
   const lookTarget = useMemo(() => new THREE.Object3D(), []) // invisible point her eyes look at
 
@@ -80,16 +63,11 @@ export default function VrmCharacter({ file }: { file: string }) {
     armsDown(vrm) // so she's never in a T-pose while loading
 
     const url = (name: string) => `${import.meta.env.BASE_URL}animations/${name}`
-    const materials = listMaterials(vrm)
-    materialsRef.current = materials
-    const compiled = precompileShaders(gl, scene, camera, vrm, materials) // runs while the animations get ready
-    const animationFiles = Promise.allSettled([
-      // true = strip root motion, walk in place. the last argument feeds the loader's percentage
-      loadMixamoAnimation(url('walk.fbx'), vrm, true, (bytes) => loadingState.reportBytes('walk.fbx', bytes)),
-      loadMixamoAnimation(url('wave.fbx'), vrm, false, (bytes) => loadingState.reportBytes('wave.fbx', bytes)),
-      loadMixamoAnimation(url('idle.fbx'), vrm, false, (bytes) => loadingState.reportBytes('idle.fbx', bytes)),
-    ])
-    Promise.all([animationFiles, compiled]).then(([[walk, wave, idle]]) => {
+    Promise.allSettled([
+      loadMixamoAnimation(url('walk.fbx'), vrm, true), // true = strip root motion, walk in place
+      loadMixamoAnimation(url('wave.fbx'), vrm),
+      loadMixamoAnimation(url('idle.fbx'), vrm),
+    ]).then(([walk, wave, idle]) => {
       if (controller.signal.aborted) return
 
       if (walk.status !== 'fulfilled' || wave.status !== 'fulfilled' || idle.status !== 'fulfilled') {
@@ -99,8 +77,9 @@ export default function VrmCharacter({ file }: { file: string }) {
             console.warn(`${ANIMATION_FILES[i]} failed to load, using the breathing pose:`, result.reason)
           }
         })
-        loadedRef.current = null
-        startWarmup()
+        bodyRef.current?.position.set(0, 0, 0)
+        bodyRef.current?.rotation.set(0, 0, 0)
+        setPhase('breathing')
         return
       }
 
@@ -115,61 +94,23 @@ export default function VrmCharacter({ file }: { file: string }) {
       // the wave file is a short loop: play it a few times as one wave, then hold the last frame
       animations.wave.setLoop(THREE.LoopRepeat, character.waveRepeats)
       animations.wave.clampWhenFinished = true
-      loadedRef.current = animations
-      startWarmup()
-    })
+      animationsRef.current = animations
 
-    function startWarmup() {
-      // measured from the moment the page started loading
-      slowRef.current = performance.now() > character.slowLoadSeconds * 1000
-      warmupFrameRef.current = 0
-      setPhase('warmup')
-    }
+      if (walksIn) {
+        animations.walk.play()
+        setPhase('walk')
+      } else {
+        animations.idle.play()
+        setPhase('idle')
+      }
+    })
 
     return () => {
       controller.abort()
       animationsRef.current?.mixer.stopAllAction()
       animationsRef.current = null
-      loadedRef.current = null
     }
-  }, [vrm, walksIn, gl, scene, camera])
-
-  // the warmup is over: show her, and start the right entrance
-  function appear(body: THREE.Group) {
-    body.scale.setScalar(1)
-    vrm.springBoneManager?.reset() // hair and cloth start calm, not swinging from the warmup
-    const animations = loadedRef.current
-    if (!animations) {
-      // an animation file failed: stand at her spot and breathe
-      body.position.set(0, 0, 0)
-      body.rotation.set(0, 0, 0)
-      setPhase('breathing')
-    } else {
-      animationsRef.current = animations
-      if (walksIn && !slowRef.current) {
-        // fast load: the walk-in from the left edge
-        body.position.set(character.walkStartX, 0, 0)
-        body.rotation.set(0, FACING_RIGHT, 0)
-        animations.walk.play()
-        setPhase('walk')
-      } else if (walksIn) {
-        // slow load: no walk-in. fade in already standing at her spot, then wave
-        body.position.set(0, 0, 0)
-        body.rotation.set(0, 0, 0)
-        animations.idle.play()
-        setSeeThrough(materialsRef.current, true, 0)
-        setPhase('fadeIn')
-      } else {
-        // reduced motion: just standing at her spot with the idle
-        body.position.set(0, 0, 0)
-        body.rotation.set(0, 0, 0)
-        animations.idle.play()
-        setPhase('idle')
-      }
-    }
-    loadingState.markShown()
-    performance.mark('character-visible') // for measuring load time in the browser's performance tools
-  }
+  }, [vrm, walksIn])
 
   useFrame((state, delta) => {
     // cap delta: after switching browser tabs it can be huge and the hair physics would explode
@@ -177,31 +118,6 @@ export default function VrmCharacter({ file }: { file: string }) {
     const body = bodyRef.current
     if (!body) return
     phaseTimeRef.current += dt
-
-    body.visible = phaseRef.current !== 'loading'
-    if (phaseRef.current === 'loading') return
-    if (phaseRef.current === 'warmup') {
-      // drawn too small to see, so the graphics card compiles her shaders and uploads her textures now
-      const frame = warmupFrameRef.current++
-      if (frame === 0) body.scale.setScalar(0.0001)
-      if (frame === 1 && slowRef.current) setSeeThrough(materialsRef.current, true) // the fade-in shaders too
-      if (frame === 2) setSeeThrough(materialsRef.current, false)
-      if (frame >= WARMUP_FRAMES) appear(body)
-      vrm.update(dt)
-      return
-    }
-
-    // fade-in after a slow load: from invisible to fully there, then blend into a wave
-    if (phaseRef.current === 'fadeIn' && animationsRef.current) {
-      const progress = Math.min(1, phaseTimeRef.current / character.fadeSeconds)
-      setSeeThrough(materialsRef.current, progress < 1, progress)
-      if (progress >= 1) {
-        const { idle, wave } = animationsRef.current
-        wave.reset().play()
-        idle.crossFadeTo(wave, character.blendSeconds, false)
-        setPhase('wave')
-      }
-    }
     const animations = animationsRef.current
 
     if (animations) {
@@ -229,12 +145,6 @@ export default function VrmCharacter({ file }: { file: string }) {
       let gestureProgress = -1
       if (phaseRef.current === 'idle' && !prefersReducedMotion) {
         const gesture = gestureRef.current
-        if (!gestureClockStartedRef.current) {
-          // the first gap counts from her first idle moment, not from page load
-          // (after a slow load, an action would otherwise be overdue and fire right after her wave)
-          gesture.nextAt += state.clock.elapsedTime
-          gestureClockStartedRef.current = true
-        }
         const before = gesture.kind
         gestureProgress = updateGesture(gesture, state.clock.elapsedTime)
         // the wave action uses wave.fbx: blend into it, and back to idle when it's over
@@ -260,12 +170,12 @@ export default function VrmCharacter({ file }: { file: string }) {
     }
 
     // turning: sideways while walking in, then smoothly toward the camera
-    const walking = phaseRef.current === 'walk'
+    const walking = phaseRef.current === 'walk' || (phaseRef.current === 'loading' && walksIn)
     body.rotation.y = THREE.MathUtils.damp(body.rotation.y, walking ? FACING_RIGHT : 0, character.turnSpeed, dt)
 
     // where should her head point? a hovered panel wins, otherwise the mouse (paused while walking in)
     const head = headRef.current
-    const looking = !walking
+    const looking = !walking && phaseRef.current !== 'loading'
     const hovering = looking && sceneState.hoveredIndex >= 0
     let goalYaw = looking ? state.pointer.x * character.headTurn : 0
     let goalPitch = looking ? state.pointer.y * character.headTilt : 0
@@ -307,55 +217,16 @@ export default function VrmCharacter({ file }: { file: string }) {
   })
 
   return (
-    // hidden until the warmup is done. appear() then puts her where her entrance starts
-    <group ref={bodyRef} visible={false}>
+    // start off the left edge, facing right (or at her spot, facing the camera, with reduced motion)
+    <group
+      ref={bodyRef}
+      position={[walksIn ? character.walkStartX : 0, 0, 0]}
+      rotation={[0, walksIn ? FACING_RIGHT : 0, 0]}
+    >
       {/* <primitive> puts an object three.js already made straight into the scene */}
       <primitive object={vrm.scene} scale={character.scale} />
     </group>
   )
-}
-
-// every material on her (each only once), with its original see-through setting
-type MaterialList = Map<THREE.Material, boolean>
-function listMaterials(vrm: VRM): MaterialList {
-  const found: MaterialList = new Map()
-  vrm.scene.traverse((object) => {
-    const mesh = object as THREE.Mesh
-    if (mesh.isMesh) [mesh.material].flat().forEach((material) => found.set(material, material.transparent))
-  })
-  return found
-}
-
-// see-through on or off for all her materials (used only during the fade-in).
-// "off" puts each material back to its own original setting
-function setSeeThrough(materials: MaterialList | null, on: boolean, opacity = 1) {
-  if (!materials) return
-  for (const [material, original] of materials) {
-    const transparent = on || original
-    if (material.transparent !== transparent) {
-      material.transparent = transparent
-      material.needsUpdate = true // switches shaders (already prepared in the background)
-    }
-    material.opacity = opacity
-  }
-}
-
-// Compiles her shaders in the background (the browser's parallel shader compile) while the animations
-// get ready, so the page doesn't freeze for it. Compiled for an off-screen picture, like the one the
-// effects draw into, so they are the exact shaders the real frames use. Two versions: normal, and
-// see-through (for the fade-in).
-function precompileShaders(gl: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera, vrm: VRM, materials: MaterialList) {
-  const target = new THREE.WebGLRenderTarget(1, 1)
-  const previous = gl.getRenderTarget()
-  gl.setRenderTarget(target)
-  const jobs = [gl.compileAsync(vrm.scene, camera, scene)]
-  setSeeThrough(materials, true)
-  jobs.push(gl.compileAsync(vrm.scene, camera, scene))
-  setSeeThrough(materials, false)
-  gl.setRenderTarget(previous)
-  return Promise.all(jobs)
-    .catch((error) => console.warn('shader precompile skipped, they will compile on first draw:', error))
-    .finally(() => target.dispose())
 }
 
 // One-time cleanup after loading. The loader caches the file,

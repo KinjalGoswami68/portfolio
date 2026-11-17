@@ -14,22 +14,7 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   base: BASE,
   plugins: [react(), failOnVisibleTodo()],
-  define: {
-    // the loader's percentage needs each file's real size (GitHub Pages gzips the .vrm in transit)
-    __ASSET_BYTES__: JSON.stringify(characterFileSizes()),
-  },
 })
-
-// sizes in bytes of the files the character needs, read from public/. a missing file is left out
-function characterFileSizes() {
-  const files = ['models/kinjal.vrm', 'animations/walk.fbx', 'animations/wave.fbx', 'animations/idle.fbx']
-  const sizes: Record<string, number> = {}
-  for (const file of files) {
-    const full = path.join(projectRoot, 'public', file)
-    if (fs.existsSync(full)) sizes[path.basename(file)] = fs.statSync(full).size
-  }
-  return sizes
-}
 
 // Stops `npm run build` (not `npm run dev`) if any "TODO" would be visible on the live site,
 // and lists where. All site text lives in src/data/, so that's what it reads.

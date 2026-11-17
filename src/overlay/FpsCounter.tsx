@@ -1,28 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
-import { sceneState } from '../sceneState'
-import { everyFrame } from '../everyFrame'
+import { useEffect, useState } from 'react'
 
 // DEV ONLY (App shows it only during `npm run dev`, it is left out of the real site):
-// frames per second in the top right corner, plus the quality level the scene picked for itself.
+// frames per second in the top right corner. It only reads the time, it changes nothing in the scene.
 export default function FpsCounter() {
-  const [text, setText] = useState('')
-  const countRef = useRef({ frames: 0, start: 0 })
+  const [fps, setFps] = useState(0)
 
-  useEffect(
-    () =>
-      everyFrame((now) => {
-        const count = countRef.current
-        count.frames++
-        // update the number twice a second (every frame would be unreadable)
-        if (now - count.start >= 500) {
-          const fps = Math.round((count.frames * 1000) / (now - count.start))
-          setText(`${fps} fps · ${sceneState.quality} · 3D ${sceneState.renderReduced ? '30 fps cap' : 'full'}`)
-          count.frames = 0
-          count.start = now
-        }
-      }),
-    [],
-  )
+  useEffect(() => {
+    const count = { frames: 0, start: performance.now(), id: 0 }
+    const tick = (now: number) => {
+      count.frames++
+      // update the number twice a second (every frame would be unreadable)
+      if (now - count.start >= 500) {
+        setFps(Math.round((count.frames * 1000) / (now - count.start)))
+        count.frames = 0
+        count.start = now
+      }
+      count.id = requestAnimationFrame(tick)
+    }
+    count.id = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(count.id)
+  }, [])
 
   return (
     <div
@@ -40,7 +37,7 @@ export default function FpsCounter() {
         pointerEvents: 'none',
       }}
     >
-      {text}
+      {fps} fps
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { Component, Suspense, type ReactNode } from 'react'
 import PlaceholderGirl from './PlaceholderGirl'
 import VrmCharacter from './VrmCharacter'
-import { loadingState } from '../loadingState'
 
 // THE ONE-LINE SWAP: the VRM file in public/models/, or null to show only the placeholder.
 const MODEL_FILE: string | null = 'kinjal.vrm'
@@ -14,7 +13,8 @@ export default function Character() {
     // if the model can't load (bad connection, missing file), show the simple stand-in
     // instead of letting the error take the whole page down
     <ModelErrorBoundary fallback={<PlaceholderGirl />}>
-      {/* fallback={null}: nothing in 3D while she downloads. the HTML loader shows at her spot */}
+      {/* fallback={null}: nothing while the model downloads, so the mannequin
+          doesn't stand at her spot and vanish right before she walks in */}
       <Suspense fallback={null}>
         <VrmCharacter file={MODEL_FILE} />
       </Suspense>
@@ -32,7 +32,6 @@ class ModelErrorBoundary extends Component<{ fallback: ReactNode; children: Reac
 
   componentDidCatch(error: unknown) {
     console.warn(`${MODEL_FILE} failed to load, showing the placeholder instead:`, error)
-    loadingState.markFailed()
   }
 
   render() {

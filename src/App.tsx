@@ -4,7 +4,6 @@ import RingHud from './overlay/RingHud'
 import Footer from './overlay/Footer'
 import ProjectDetail from './overlay/ProjectDetail'
 import Chapters from './overlay/Chapters'
-import CharacterLoader from './overlay/CharacterLoader'
 import FpsCounter from './overlay/FpsCounter'
 import { projects } from './data/projects'
 import { cameraViews, colors, fonts, ring } from './theme'
@@ -147,7 +146,7 @@ export default function App() {
 
   return (
     <div ref={appRef} className="app" style={themeVariables}>
-      {/* fallback null: the page background is already dark, and the loader shows at her spot */}
+      {/* fallback null: the page background is already dark while the 3D file downloads */}
       <Suspense fallback={null}>
         <Scene
           view={view}
@@ -187,7 +186,6 @@ export default function App() {
       </div>
 
       <div className="overlay">
-        <CharacterLoader view={view} />
         {/* frames per second, only during `npm run dev` (import.meta.env.DEV is false on the real site) */}
         {import.meta.env.DEV && <FpsCounter />}
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
