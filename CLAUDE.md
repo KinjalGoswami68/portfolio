@@ -109,7 +109,7 @@ a warrior girl, my style, from `kinjal.vrm`. keep the placeholder (simple femini
 
 ## chapters (below the ring)
 
-- scrolling past the ring reveals the chapters from CONTENT.md one by one: Right Now, Wins, Open Source, Education, Who Am I, Numbers, Writing, Contact
+- scrolling past the ring reveals the chapters from CONTENT.md one by one: Experience, Wins, Open Source, Education, Who Am I, Numbers, Writing, Contact
 - they slide in over the 3D scene, which stays alive behind them. the camera pulls back and rises as you scroll through them
 - Wins items open their project panel. Education is a vertical timeline. Numbers count up when they scroll into view. the contact email sparkles on hover
 - reduced motion: no sliding, no counting, no camera move

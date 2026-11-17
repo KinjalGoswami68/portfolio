@@ -47,7 +47,7 @@ export default function ProjectDetail({ project, onClose }: Props) {
             ×
           </button>
 
-          <h2 id="project-detail-name" className="detail-name title-shimmer title-luminous">
+          <h2 id="project-detail-name" className="detail-name title-shimmer title-luminous" data-text={project.name}>
             {project.name}
           </h2>
           {project.badge && <p className="detail-badge">{project.badge}</p>}

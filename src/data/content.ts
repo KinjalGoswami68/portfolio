@@ -8,7 +8,7 @@ export const intro = {
   facts: [
     'Won 1st Prize at Hacktoberfest Hack Day 2026',
     'I build ML models, AI agents',
-    'Currently: AI Intern at DataFlirt',
+    'Ex AI Intern at DataFlirt',
   ],
   button: 'Wanna know more?',
 }
@@ -56,10 +56,10 @@ export const copyright = '© 2026 Kinjal Goswami' // right end of the footer bar
 // ---- chapters below the ring (CONTENT.md "chapters") ----
 
 export const chapters = {
-  rightNow: {
-    title: 'Right Now',
-    role: 'AI Intern · DataFlirt (Bengaluru, Remote) · Oct 2026',
-    text: 'Building the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and keeping LLM token costs measured.',
+  experience: {
+    title: 'Experience',
+    role: 'AI Intern · DataFlirt (Bengaluru, Remote) · Oct to Nov 2026',
+    text: 'Built the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and kept LLM token costs measured.',
   },
   wins: {
     title: 'Wins',

@@ -16,7 +16,7 @@ line 2: 2nd Year CS Student.
 facts (small glowing pills):
 - Won 1st Prize at Hacktoberfest Hack Day 2026
 - I build ML models, AI agents
-- Currently: AI Intern at DataFlirt
+- Ex AI Intern at DataFlirt
 (the fiction line lives in the Who Am I chapter, not on the intro)
 button: Wanna know more?
 
@@ -148,9 +148,9 @@ links:
 
 ## chapters (below the ring, as you scroll)
 
-### Right Now
-AI Intern · DataFlirt (Bengaluru, Remote) · Oct 2026
-Building the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and keeping LLM token costs measured.
+### Experience
+AI Intern · DataFlirt (Bengaluru, Remote) · Oct to Nov 2026
+Built the systems that collect, store and serve data: self-healing Python scrapers, Postgres storage with dedup, FastAPI APIs tracked at p50/p95, deploys on AWS/GCP, and kept LLM token costs measured.
 
 ### Wins
 - 1st Prize · Hacktoberfest Hack Day 2026 · Leash (opens the leash panel)

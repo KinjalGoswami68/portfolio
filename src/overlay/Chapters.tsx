@@ -5,14 +5,14 @@ import { prefersReducedMotion } from '../reducedMotion'
 
 // The chapters below the ring. Each one slides in when it scrolls onto the screen.
 export default function Chapters({ onOpen }: { onOpen: (index: number) => void }) {
-  const { rightNow, wins, openSource, education, whoAmI, numbers, writing, contact } = chapters
+  const { experience, wins, openSource, education, whoAmI, numbers, writing, contact } = chapters
   const openById = (id: string) => onOpen(projects.findIndex((project) => project.id === id))
 
   return (
     <div className="chapters">
-      <Chapter title={rightNow.title}>
-        <p className="chapter-role">{rightNow.role}</p>
-        <p>{rightNow.text}</p>
+      <Chapter title={experience.title}>
+        <p className="chapter-role">{experience.role}</p>
+        <p>{experience.text}</p>
       </Chapter>
 
       <Chapter title={wins.title}>
@@ -110,7 +110,9 @@ function Chapter({ title, children }: { title: string; children: ReactNode }) {
   const [ref, visible] = useSeenOnce<HTMLElement>()
   return (
     <section ref={ref} className={`chapter ${visible ? 'is-visible' : ''}`}>
-      <h2 className="chapter-title title-shimmer">{title}</h2>
+      <h2 className="chapter-title title-shimmer" data-text={title}>
+        {title}
+      </h2>
       {children}
     </section>
   )

@@ -73,15 +73,9 @@
   line-height: 0.95;
   letter-spacing: 0.01em;
 }
-/* the name: bright gold, glowing. drop-shadow traces the letter shapes, even with gradient-filled text */
-/* luminous gold for big titles (the intro name and the project name in the card) */
-.title-luminous.title-shimmer {
-  background-image: linear-gradient(
-    100deg,
-    var(--gold-bright) 35%,
-    var(--soft-white) 50%,
-    var(--gold-bright) 65%
-  );
+/* luminous gold for big titles (the intro name and the project name in the card): a soft gold glow
+   around the solid gold letters. drop-shadow traces the letter shapes */
+.title-luminous {
   filter: drop-shadow(0 0 14px color-mix(in srgb, var(--gold) 55%, transparent))
     drop-shadow(0 0 2px color-mix(in srgb, var(--gold-bright) 80%, transparent));
 }
@@ -491,6 +485,8 @@
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1;
+  /* a soft gold glow so the title stands out clearly from the dark card */
+  text-shadow: 0 0 18px color-mix(in srgb, var(--gold) 45%, transparent);
 }
 .chapter-role {
   color: var(--gold-bright);
@@ -664,14 +660,31 @@
   }
 }
 
-/* ---- gold shimmer on titles: a lighter band slowly sliding across ---- */
+/* ---- titles: solid bright gold, with an optional shimmer on top ----
+   The letters themselves are a SOLID color, so they stay bright gold even if a browser or a dark-mode
+   extension changes or drops gradients. The shimmer is a separate copy of the text laid on top
+   (::after, the text comes from data-text) with mix-blend-mode: lighten, which can only make pixels
+   lighter, never darker. So in the worst case the shimmer disappears and the solid gold stays. */
 .title-shimmer {
-  background: linear-gradient(100deg, var(--gold) 40%, var(--soft-white) 50%, var(--gold) 60%);
+  color: var(--gold-bright);
+}
+.title-shimmer[data-text] {
+  position: relative;
+}
+.title-shimmer[data-text]::after {
+  content: attr(data-text);
+  content: attr(data-text) / ''; /* the copy is decoration: screen readers skip it (where supported) */
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* a light band slowly sliding across, transparent everywhere else */
+  background: linear-gradient(100deg, transparent 40%, rgba(255, 255, 255, 0.75) 50%, transparent 60%);
   background-size: 300% 100%;
   background-position: 100% 0;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  mix-blend-mode: lighten;
   animation: shimmer 7s linear infinite;
 }
 @keyframes shimmer {
@@ -682,9 +695,9 @@
 
 /* ---- reduced motion: no shimmer, no pulse, no sliding, instant fades ---- */
 @media (prefers-reduced-motion: reduce) {
-  .title-shimmer {
-    animation: none;
-    background-position: 50% 0;
+  /* no shimmer at all: just the solid gold titles */
+  .title-shimmer[data-text]::after {
+    display: none;
   }
   .enter-button {
     animation: none;
