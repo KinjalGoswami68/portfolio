@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import type { VRM, VRMHumanBoneName } from '@pixiv/three-vrm'
+import { fetchWithRetry } from './fetchWithRetry.ts' // .ts: so scripts/verify-vrm.mjs can load this file in Node too
 
 // Retargets a Mixamo .fbx animation onto a VRM.
 // Adapted from the official three-vrm example "loadMixamoAnimation" (MIT license).
@@ -66,7 +67,8 @@ const mixamoToVrm: Record<string, VRMHumanBoneName> = {
 
 // inPlace = true strips forward/sideways hip movement (root motion), for the walk.
 export async function loadMixamoAnimation(url: string, vrm: VRM, inPlace = false) {
-  const asset = await new FBXLoader().loadAsync(url)
+  // downloaded with retries (a slow or flaky connection gets a few more chances), then read by FBXLoader
+  const asset = new FBXLoader().parse(await fetchWithRetry(url), '')
   const clip = THREE.AnimationClip.findByName(asset.animations, 'mixamo.com') // Mixamo always uses this name
   if (!clip) throw new Error(`no Mixamo animation found in ${url}`)
   const isVrm0 = vrm.meta.metaVersion === '0' // old VRM files face the other way

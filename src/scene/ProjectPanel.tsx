@@ -69,34 +69,35 @@ export default function ProjectPanel({ project, shimmer }: { project: Project; s
   )
 }
 
-// Tries to load public/projects/<image>. If it isn't there yet, draws a placeholder card.
+// The panel's picture. Never blank, even on a slow or broken connection:
+// 1) right away: the placeholder card (name + panel line), in whatever fonts are ready
+// 2) when the web fonts arrive: the card is drawn again with them
+// 3) if a screenshot exists in public/projects/<image>, it replaces the card
 function usePanelTexture(project: Project) {
-  const [texture, setTexture] = useState<THREE.Texture | null>(null)
+  const [texture, setTexture] = useState<THREE.Texture>(() => makePlaceholderTexture(project))
 
   useEffect(() => {
     let cancelled = false // stops a late load from updating a removed panel
+    let photoFound = false
+    loadPanelFonts().then(() => {
+      if (!cancelled && !photoFound) setTexture(makePlaceholderTexture(project))
+    })
     const url = `${import.meta.env.BASE_URL}projects/${project.image}` // BASE_URL keeps it working on GitHub Pages
-    new THREE.TextureLoader().load(
-      url,
-      (photo) => {
-        // screenshot found
-        if (cancelled) return
-        photo.colorSpace = THREE.SRGBColorSpace
-        coverCrop(photo, ring.panelWidth / ring.panelHeight)
-        setTexture(photo)
-      },
-      undefined,
-      () => {
-        // no screenshot yet: wait for fonts, then paint the placeholder
-        loadPanelFonts().then(() => {
-          if (!cancelled) setTexture(makePlaceholderTexture(project))
-        })
-      },
-    )
+    new THREE.TextureLoader().load(url, (photo) => {
+      // screenshot found
+      if (cancelled) return
+      photoFound = true
+      photo.colorSpace = THREE.SRGBColorSpace
+      coverCrop(photo, ring.panelWidth / ring.panelHeight)
+      setTexture(photo)
+    })
     return () => {
       cancelled = true
     }
   }, [project])
+
+  // when a picture is replaced (or the panel goes away), free the old one's graphics memory
+  useEffect(() => () => texture.dispose(), [texture])
 
   return texture
 }

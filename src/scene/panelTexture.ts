@@ -7,7 +7,12 @@ import { colors, fonts } from '../theme'
 const WIDTH = 1024
 const HEIGHT = 640
 
-// A canvas can only draw a web font after it has downloaded. Wait for both fonts.
+// The fonts as a canvas sees them, with fallbacks: if Anton or Inter haven't arrived (slow or blocked
+// connection), the card is drawn at once with a similar font on the computer, and drawn again later.
+const titleFont = (size: number) => `${size}px "${fonts.title}", Impact, "Arial Narrow", sans-serif`
+const bodyFont = `400 40px "${fonts.body}", "Segoe UI", Arial, sans-serif`
+
+// A canvas can only draw a web font after it has downloaded. Resolves when both are ready.
 export async function loadPanelFonts() {
   await Promise.all([
     document.fonts.load(`200px "${fonts.title}"`),
@@ -36,10 +41,10 @@ export function makePlaceholderTexture(project: Project) {
   // project name: Anton, as big as fits (big = readable from the ring camera)
   const nameY = HEIGHT * 0.4
   let nameSize = 200
-  ctx.font = `${nameSize}px "${fonts.title}"`
+  ctx.font = titleFont(nameSize)
   while (ctx.measureText(project.name).width > WIDTH - 120 && nameSize > 60) {
     nameSize -= 4
-    ctx.font = `${nameSize}px "${fonts.title}"`
+    ctx.font = titleFont(nameSize)
   }
   // champagne gold, with a soft lighter band through the middle
   const gold = ctx.createLinearGradient(0, nameY - nameSize / 2, 0, nameY + nameSize / 2)
@@ -50,7 +55,7 @@ export function makePlaceholderTexture(project: Project) {
   ctx.fillText(project.name, WIDTH / 2, nameY)
 
   // panel line: Inter, rose grey, wrapped onto several lines if needed
-  ctx.font = `400 40px "${fonts.body}"`
+  ctx.font = bodyFont
   ctx.fillStyle = colors.roseGrey
   const lines = wrapText(ctx, project.panelLine, WIDTH - 160)
   lines.forEach((line, i) => {

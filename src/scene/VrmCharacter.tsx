@@ -6,6 +6,7 @@ import { VRMLoaderPlugin, VRMUtils, type VRM } from '@pixiv/three-vrm'
 import { character } from '../theme'
 import { prefersReducedMotion } from '../reducedMotion'
 import { loadMixamoAnimation } from './mixamo'
+import { fetchWithRetry } from './fetchWithRetry'
 import { sceneState } from '../sceneState'
 import {
   aimEyes,
@@ -34,10 +35,20 @@ const ANIMATION_FILES = ['walk.fbx', 'wave.fbx', 'idle.fbx']
 const FACING_RIGHT = Math.PI / 2 // turned 90 degrees: walking toward the right of the screen
 const FALLBACK_WALK_SPEED = 1.2 // used only if walk.fbx turns out to have no forward motion
 
+// GLTFLoader, but the download goes through fetchWithRetry: a failed or stalled download is tried
+// again a few times before giving up (then the placeholder shows, see Character.tsx)
+class RetryingGLTFLoader extends GLTFLoader {
+  load(url: string, onLoad: (gltf: GLTF) => void, _onProgress?: unknown, onError?: (error: unknown) => void) {
+    fetchWithRetry(url)
+      .then((bytes) => this.parse(bytes, THREE.LoaderUtils.extractUrlBase(url), onLoad, onError))
+      .catch((error) => onError?.(error))
+  }
+}
+
 // The real character: loads the .vrm, walks in, waves, idles, blinks, follows the mouse.
 export default function VrmCharacter({ file }: { file: string }) {
   // load the file. the plugin teaches GLTFLoader to read the VRM parts (bones, face, physics)
-  const gltf = useLoader(GLTFLoader, `${import.meta.env.BASE_URL}models/${file}`, (loader) => {
+  const gltf = useLoader(RetryingGLTFLoader, `${import.meta.env.BASE_URL}models/${file}`, (loader) => {
     loader.register((parser) => new VRMLoaderPlugin(parser))
   })
   const vrm = prepareVrm(gltf)

@@ -26,15 +26,16 @@ const PLAN = {
   0: { max: 2048, format: 'png', note: 'face, eyes, mouth (see-through edges)' },
   1: { max: 1024, format: 'jpeg', note: 'face glow (emissive)' },
   2: { max: 1024, format: 'png', note: 'face normal map' },
-  // the dress top is framed close in the intro: below 4096 px its lace, quilting and rose turned blocky,
-  // so the body/clothes texture and its shade colour keep their full size (re-compressed, same pixels)
-  3: { max: 4096, format: 'png', note: 'body, clothes, hair (see-through edges)' },
+  // the dress top is framed close in the intro: at 1024 px its lace, quilting and rose turned blocky.
+  // 2048 px looks the same as the original there, and needs a quarter of the graphics memory of 4096 px
+  // (about 124 MB for all her textures instead of 252 MB), which matters on integrated graphics
+  3: { max: 2048, format: 'png', note: 'body, clothes, hair (see-through edges)' },
   4: { max: 1024, format: 'jpeg', note: 'body glow (emissive)' },
   5: { max: 2048, format: 'png', note: 'body normal map' },
   6: { max: 256, format: 'jpeg', note: 'VRM thumbnail (never drawn on screen)' },
   7: { max: 2048, format: 'jpeg', note: 'face shade colour' },
   9: { max: 256, format: 'png', note: 'face outline width' },
-  11: { max: 4096, format: 'jpeg', note: 'body shade colour' },
+  11: { max: 2048, format: 'jpeg', note: 'body shade colour' },
   12: { max: 256, format: 'png', note: 'body outline width' },
   // 8 and 10 are 8x8 pixel images: left as they are
 }

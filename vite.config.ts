@@ -13,8 +13,37 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url))
 // https://vite.dev/config/
 export default defineConfig({
   base: BASE,
-  plugins: [react(), failOnVisibleTodo()],
+  plugins: [react(), failOnVisibleTodo(), fetchEarly()],
+  define: {
+    // the footer shows the Resume link if the pdf is in public/resume/. checked here, once,
+    // so the link never depends on a network request
+    __RESUME_EXISTS__: JSON.stringify(fs.existsSync(path.join(projectRoot, 'public/resume/Kinjal_Resume.pdf'))),
+  },
 })
+
+// Adds two hints to the built index.html, so the browser starts these right away and at high priority:
+// - the 3D file (Scene-*.js). it is loaded lazily, so without this it would only start once the main
+//   script has run, and on a slow connection it would queue behind the big model download
+// - the title font (Anton), used on the intro name and the 3D panels
+function fetchEarly(): Plugin {
+  return {
+    name: 'fetch-early',
+    apply: 'build',
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, context) {
+        if (!context.bundle) return []
+        const files = Object.values(context.bundle)
+        const scene = files.find((file) => file.type === 'chunk' && file.name === 'Scene')
+        const titleFont = files.find((file) => file.type === 'asset' && /anton-latin.*\.woff2$/.test(file.fileName))
+        const tags = []
+        if (scene) tags.push({ tag: 'link', attrs: { rel: 'modulepreload', crossorigin: '', href: BASE + scene.fileName }, injectTo: 'head' as const })
+        if (titleFont) tags.push({ tag: 'link', attrs: { rel: 'preload', as: 'font', type: 'font/woff2', crossorigin: '', href: BASE + titleFont.fileName }, injectTo: 'head' as const })
+        return tags
+      },
+    },
+  }
+}
 
 // Stops `npm run build` (not `npm run dev`) if any "TODO" would be visible on the live site,
 // and lists where. All site text lives in src/data/, so that's what it reads.

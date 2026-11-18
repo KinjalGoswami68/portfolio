@@ -1,3 +1,22 @@
+/* the two fonts live inside the site (src/assets/fonts/, free under the SIL Open Font License), so a slow or
+   blocked Google Fonts can't hold the page up. latin letters only: all the site's text is English.
+   font-display: swap = show the text at once in a fallback font, switch when the real one arrives.
+   names must match fonts in src/theme.ts */
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/anton-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 600; /* one variable font file covers both weights the site uses */
+  font-display: swap;
+  src: url('./assets/fonts/inter-latin.woff2') format('woff2');
+}
+
 /* the site is already dark: browsers and dark-mode extensions should leave its colors alone */
 :root { color-scheme: dark; }
 
