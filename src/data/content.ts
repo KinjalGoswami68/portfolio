@@ -15,6 +15,7 @@ export const intro = {
 
 export const hero = {
   backLink: 'Back to intro',
+  scrollHint: 'Scroll down for more',
 }
 
 // buttons and headings in the project detail card (CONTENT.md "labels")

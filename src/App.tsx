@@ -8,6 +8,7 @@ import FpsCounter from './overlay/FpsCounter'
 import { projects } from './data/projects'
 import { cameraViews, colors, fonts, ring } from './theme'
 import { sceneState } from './sceneState'
+import { prefersReducedMotion } from './reducedMotion'
 import './overlay/overlay.css'
 
 // the 3D scene (three.js and friends) arrives in its own file, after the intro is already on screen
@@ -44,6 +45,9 @@ export default function App() {
   const appRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<{ x: number; y: number } | null>(null) // last pointer spot while dragging, null = not dragging
+  const [chaptersInView, setChaptersInView] = useState(false) // true once the first chapter has come up onto the screen
+  const [hintReady, setHintReady] = useState(false) // the scroll hint waits 2 s after the ring view opens
+  const [scrollReady, setScrollReady] = useState(false) // see the scroll guard below
 
   // tell the 3D side which view we're in. leaving the ring: reset scroll and hover
   useEffect(() => {
@@ -57,6 +61,32 @@ export default function App() {
       scrollerRef.current?.scrollTo({ top: 0 })
     }
   }, [view])
+
+  // in the ring view: the scroll hint shows up after 2 s, and scrolling is switched on after 0.9 s.
+  // the scroll guard: the wheel flick that leaves the intro could otherwise keep going straight into the chapters
+  useEffect(() => {
+    if (view !== 'ring') return
+    const hintTimer = setTimeout(() => setHintReady(true), 2000)
+    const scrollTimer = setTimeout(() => setScrollReady(true), 900)
+    return () => {
+      clearTimeout(hintTimer)
+      clearTimeout(scrollTimer)
+      setHintReady(false)
+      setScrollReady(false)
+    }
+  }, [view])
+
+  // the scroll hint button: scroll to the first chapter (Experience) and put keyboard focus on its title
+  function scrollToChapters() {
+    const scroller = scrollerRef.current
+    const firstChapter = scroller?.querySelector<HTMLElement>('.chapter')
+    if (!scroller || !firstChapter) return
+    // where the chapter is inside the scrolling layer, with a little room above it (10% of the screen)
+    const top = firstChapter.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop
+    scroller.scrollTo({ top: top - scroller.clientHeight * 0.1, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+    // preventScroll: the focus mustn't jump the page, the smooth scroll is already on its way
+    firstChapter.querySelector<HTMLElement>('.chapter-title')?.focus({ preventScroll: true })
+  }
 
   // open / close a project, and keep the address bar's #hash in step
   function openProject(index: number) {
@@ -161,7 +191,8 @@ export default function App() {
       <div
         ref={scrollerRef}
         // scrolls only in the ring view, and is locked while a project card is open (the card scrolls instead)
-        className={`scroller ${view === 'ring' && openIndex < 0 ? 'can-scroll' : ''}`}
+        // (and not in the first moment after entering, see the scroll guard above)
+        className={`scroller ${view === 'ring' && openIndex < 0 && scrollReady ? 'can-scroll' : ''}`}
         onScroll={(event) => {
           const element = event.currentTarget
           const screen = element.clientHeight
@@ -171,6 +202,9 @@ export default function App() {
           const scrollable = element.scrollHeight - screen - chaptersStart
           const progress = (element.scrollTop - chaptersStart) / Math.max(scrollable, 1)
           sceneState.chapterProgress = clamp(progress, 0, 1)
+          // has the first chapter's top come up into the screen? (hides the scroll hint, shows it again further up)
+          const firstChapter = element.querySelector('.chapter')
+          setChaptersInView(firstChapter ? firstChapter.getBoundingClientRect().top < element.getBoundingClientRect().bottom : false)
         }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -189,7 +223,14 @@ export default function App() {
         {/* frames per second, only during `npm run dev` (import.meta.env.DEV is false on the real site) */}
         {import.meta.env.DEV && <FpsCounter />}
         <Intro shown={view === 'intro'} onEnter={() => setView('ring')} />
-        <RingHud shown={view === 'ring'} onBack={backToIntro} onOpen={openProject} />
+        <RingHud
+          shown={view === 'ring'}
+          onBack={backToIntro}
+          onOpen={openProject}
+          // the hint: 2 s after the ring opens, never with a card open, gone once the chapters come up
+          hintShown={hintReady && openIndex < 0 && !chaptersInView}
+          onHint={scrollToChapters}
+        />
         <Footer />
         <ProjectDetail project={openIndex >= 0 ? projects[openIndex] : null} onClose={closeProject} />
       </div>

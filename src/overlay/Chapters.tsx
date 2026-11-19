@@ -110,7 +110,8 @@ function Chapter({ title, children }: { title: string; children: ReactNode }) {
   const [ref, visible] = useSeenOnce<HTMLElement>()
   return (
     <section ref={ref} className={`chapter ${visible ? 'is-visible' : ''}`}>
-      <h2 className="chapter-title title-shimmer" data-text={title}>
+      {/* tabIndex -1: focusable from code (the scroll hint sends keyboard focus here), not a Tab stop */}
+      <h2 className="chapter-title title-shimmer" data-text={title} tabIndex={-1}>
         {title}
       </h2>
       {children}

@@ -101,7 +101,8 @@ export const ring = {
   scrollTurn: 1.2, // extra spin per screen-height of scrolling (radians)
   spinEase: 4, // how quickly scroll/drag spin catches up (higher = snappier)
   blockerSink: 2.4, // how far panels in front of her sink below the floor
-  scrollScreens: 2.5, // how tall the ring part of the page is, in screen heights
+  scrollScreens: 1.2, // how tall the ring part of the page is, in screen heights. 1.2: the first chapter
+  // starts coming up after about a third of a screen (one flick of the mouse wheel), the ring turns a little on the way
   frameGlow: 1.6, // the gold frame's own glow, normally (the shimmer stripe is the part that blooms)
   hoverFrameGlow: 4, // ...and when hovered (the whole frame blooms)
   shimmerSpeed: 0.12, // how fast the shimmer stripe sweeps across the frames (loops per second)

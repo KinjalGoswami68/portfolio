@@ -32,6 +32,7 @@ copyright (right end of the bar): © 2026 Kinjal Goswami
 ## hero (the ring view)
 
 back link (returns to the intro): Back to intro
+scroll hint (button above the footer bar, scrolls to the Experience chapter): Scroll down for more
 not shown yet:
 - big name: Kinjal
 - small line above: Kinjal Goswami

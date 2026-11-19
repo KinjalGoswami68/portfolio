@@ -244,6 +244,58 @@
   }
 }
 
+/* ---- ring view: "Scroll down for more", centered just above the footer bar ---- */
+.scroll-hint {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.6s ease, color 0.2s ease;
+}
+.scroll-hint:hover {
+  color: var(--gold-bright);
+}
+.scroll-hint:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+/* hidden: fades out, then visibility: hidden takes it out of the Tab order and away from screen readers */
+.scroll-hint.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.6s ease, visibility 0s 0.6s;
+}
+.scroll-hint-arrow {
+  animation: hint-bounce 1.8s ease-in-out infinite;
+}
+@keyframes hint-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+/* the chapter titles get focus from the hint (by code): no outline unless it came from the keyboard */
+.chapter-title:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* ---- ring view: back link + hero badge ---- */
 .back-link {
   position: absolute;
@@ -700,6 +752,9 @@
     display: none;
   }
   .enter-button {
+    animation: none;
+  }
+  .scroll-hint-arrow {
     animation: none;
   }
   .intro,
